@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Hash, Paperclip, Send, Gem, Spade, Trophy, Swords, Target } from "lucide-react";
 import { SocialShell } from "@/components/layout/social-shell";
+import { StaggerIn } from "@/components/layout/game-ui";
 import {
   chatChannels,
   chatMessages,
@@ -93,10 +94,12 @@ export default function ChatPage() {
             </span> */}
           </div>
 
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
-            {chatMessages.map((msg) => (
-              <ChatBubble key={msg.id} message={msg} />
-            ))}
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+            <StaggerIn className="space-y-4" stepMs={40}>
+              {chatMessages.map((msg) => (
+                <ChatBubble key={msg.id} message={msg} />
+              ))}
+            </StaggerIn>
           </div>
 
           <div className="shrink-0 border-t border-border bg-bg-card p-3 sm:p-4">

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Check, CheckCircle, CircleX, Edit } from "lucide-react";
 import { AuthScene } from "@/components/layout/auth-scene";
 import { BrandHeader } from "@/components/layout/brand-header";
+import { StaggerIn } from "@/components/layout/game-ui";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +17,7 @@ function LoadingDots() {
   return (
     <div className="flex gap-1.5">
       {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className={cn(
-            "size-2 rounded-full",
-            i === 1 ? "bg-gold" : "bg-gold-muted/40",
-          )}
-        />
+        <span key={i} className="game-loading-dot size-2 rounded-full bg-gold" />
       ))}
     </div>
   );
@@ -52,11 +47,11 @@ export default function TeamSetupPage() {
               <span className="text-gold">TABLE CODE: {TABLE_CODE}</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-4">
+            <StaggerIn className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-4" stepMs={50}>
               {playerClues.map((member) => (
                 <div
                   key={member.id}
-                  className="flex flex-col items-center gap-3 rounded-xl border-[1.5px] border-border bg-bg-input p-4"
+                  className="game-card flex flex-col items-center gap-3 rounded-xl border-[1.5px] border-border bg-bg-input p-4"
                 >
                   <span
                     className="flex size-14 items-center justify-center rounded-full text-lg font-bold text-white"
@@ -71,7 +66,7 @@ export default function TeamSetupPage() {
                   </span>
                 </div>
               ))}
-            </div>
+            </StaggerIn>
           </section>
 
           {/* Team name panel */}
@@ -114,7 +109,7 @@ export default function TeamSetupPage() {
                       type="button"
                       onClick={() => setTeamName(name)}
                       className={cn(
-                        "rounded-[20px] border-[1.5px] px-[18px] py-2.5 text-sm font-semibold transition-colors",
+                        "game-btn-sm rounded-[20px] border-[1.5px] px-[18px] py-2.5 text-sm font-semibold transition-colors",
                         selected
                           ? "border-gold bg-gold-light text-[#091d14]"
                           : "border-border bg-bg-input text-text-muted hover:border-gold-muted/60",

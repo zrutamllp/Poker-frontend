@@ -1,6 +1,8 @@
 import { Trophy } from "lucide-react";
 import type { LeaderboardEntry } from "@/types/game";
 import { CultureCoinPill } from "@/components/game/seat-badge";
+import { StaggerIn } from "@/components/layout/game-ui";
+import { useMotionTrigger } from "@/hooks/use-motion-trigger";
 import { cn } from "@/lib/utils";
 
 interface LeaderboardSidebarProps {
@@ -53,60 +55,77 @@ export function LeaderboardSidebar({ entries, className, compact = false }: Lead
       <hr className="border-[#1f2535]" />
 
       <ul className="flex flex-1 flex-col gap-2 overflow-y-auto scrollbar-thin">
-        {entries.map((entry) => {
-          const topStyle = topRowStyles[entry.rank];
-          const isYou = entry.id === "1";
+        <StaggerIn className="flex flex-col gap-2" stepMs={40}>
+          {entries.map((entry) => {
+            const topStyle = topRowStyles[entry.rank];
+            const isYou = entry.id === "1";
 
-          if (compact) {
-            return (
-              <li
-                key={entry.id}
-                className={cn(
-                  "flex items-center justify-between gap-3 rounded-lg px-3 py-2.5",
-                  isYou ? "bg-[rgba(242,201,76,0.03)]" : "bg-[#1c1f2b]",
-                )}
-              >
-                <p className="truncate text-sm font-semibold text-white">
-                  {entry.name}
-                  {isYou ? " (You)" : ""}
-                </p>
-                <p className={cn("text-xs", isYou ? "text-gold-light" : "text-text-muted-alt")}>
-                  {entry.points} Pts
-                </p>
-              </li>
-            );
-          }
+            if (compact) {
+              return (
+                <li
+                  key={entry.id}
+                  className={cn(
+                    "flex items-center justify-between gap-3 rounded-lg px-3 py-2.5",
+                    isYou ? "bg-[rgba(242,201,76,0.03)]" : "bg-[#1c1f2b]",
+                  )}
+                >
+                  <p className="truncate text-sm font-semibold text-white">
+                    {entry.name}
+                    {isYou ? " (You)" : ""}
+                  </p>
+                  <p className={cn("text-xs", isYou ? "text-gold-light" : "text-text-muted-alt")}>
+                    {entry.points} Pts
+                  </p>
+                </li>
+              );
+            }
 
-          return (
-            <li
-              key={entry.id}
-              className={cn(
-                "flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors hover:bg-[#1a202e]/50",
-                topStyle?.row ?? "border-transparent",
-              )}
-            >
-              <span
-                className={cn(
-                  "flex size-6 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold",
-                  topStyle?.rank ?? "",
-                  topStyle?.rankText ?? "text-[#8f9cae]",
-                )}
-              >
-                {entry.rank}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-white">
-                  {entry.name}
-                </p>
-                <p className="text-[11px] text-[#8f9cae]">
-                  {entry.points} culture coins
-                </p>
-              </div>
-              <CultureCoinPill amount={entry.cultureCoins} />
-            </li>
-          );
-        })}
+            return <LeaderboardRow key={entry.id} entry={entry} topStyle={topStyle} isYou={isYou} />;
+          })}
+        </StaggerIn>
       </ul>
     </aside>
+  );
+}
+
+function LeaderboardRow({
+  entry,
+  topStyle,
+  isYou,
+}: {
+  entry: LeaderboardEntry;
+  topStyle?: (typeof topRowStyles)[number];
+  isYou: boolean;
+}) {
+  const rankPulse = useMotionTrigger(entry.rank === 1 ? entry.cultureCoins : 0, "game-score-pop game-animate");
+
+  return (
+    <li
+      className={cn(
+        "flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors hover:bg-[#1a202e]/50",
+        topStyle?.row ?? "border-transparent",
+        isYou && "border-gold/20",
+      )}
+    >
+      <span
+        className={cn(
+          "flex size-6 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold",
+          topStyle?.rank ?? "",
+          topStyle?.rankText ?? "text-[#8f9cae]",
+        )}
+      >
+        {entry.rank}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-white">
+          {entry.name}
+          {isYou ? " (You)" : ""}
+        </p>
+        <p className="text-[11px] text-[#8f9cae]">{entry.points} culture coins</p>
+      </div>
+      <span className={rankPulse}>
+        <CultureCoinPill amount={entry.cultureCoins} />
+      </span>
+    </li>
   );
 }

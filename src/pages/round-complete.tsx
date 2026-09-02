@@ -6,6 +6,7 @@ import {
   roundCompleteSummary,
 } from "@/data/game-data";
 import { PokerTableCanvas } from "@/components/game/poker-table-canvas";
+import { GameConfetti, StaggerIn } from "@/components/layout/game-ui";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
 import { ScrollPage, PageContainer } from "@/components/layout/page-layouts";
 import { cn } from "@/lib/utils";
@@ -16,12 +17,13 @@ export default function RoundCompletePage() {
 
   return (
     <ScrollPage className="relative bg-bg-tertiary">
+      <GameConfetti />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.06)_0%,transparent_60%)]" />
       <NavIconBar className="absolute right-4 top-4 z-10 sm:right-6 sm:top-4" />
 
       <PageContainer maxWidth="max-w-6xl" className="relative space-y-8 py-8 sm:space-y-10 sm:py-10">
         {/* Header */}
-        <header className="space-y-4 text-center">
+        <header className="game-stagger-in game-animate space-y-4 text-center">
           <h1 className="font-serif text-4xl font-black uppercase text-gold-light sm:text-5xl lg:text-6xl">
             Round {round} Complete
           </h1>
@@ -31,7 +33,7 @@ export default function RoundCompletePage() {
               {correctAnswer.label} - {correctAnswer.text}
             </span>
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          <StaggerIn className="flex flex-wrap items-center justify-center gap-2 sm:gap-3" stepMs={50} baseDelayMs={120}>
             {bettingOptions.map((opt, i) => {
               const isCorrect = opt.id === correctAnswer.label;
               return (
@@ -40,7 +42,7 @@ export default function RoundCompletePage() {
                   className={cn(
                     "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm",
                     isCorrect
-                      ? "border-gold bg-gold/10 text-gold-light"
+                      ? "border-gold bg-gold/10 text-gold-light game-coin-pulse game-animate"
                       : "border-border bg-bg-card text-text-muted-alt",
                   )}
                 >
@@ -56,7 +58,7 @@ export default function RoundCompletePage() {
                 </span>
               );
             })}
-          </div>
+          </StaggerIn>
         </header>
 
         {/* Poker table with round deltas */}
@@ -70,11 +72,11 @@ export default function RoundCompletePage() {
         </div>
 
         {/* Countdown */}
-        <section className="flex flex-col items-center gap-4 text-center">
+        <section className="game-stagger-in game-animate flex flex-col items-center gap-4 text-center" style={{ animationDelay: "180ms" }}>
           <p className="text-xs font-bold uppercase tracking-wider text-text-muted-alt">
             Next Round Starts In
           </p>
-          <div className="flex size-28 items-center justify-center rounded-full border-2 border-gold bg-bg-card shadow-[0_0_24px_rgba(212,175,55,0.2)] sm:size-[120px]">
+          <div className="game-coin-pulse game-animate flex size-28 items-center justify-center rounded-full border-2 border-gold bg-bg-card shadow-[0_0_24px_rgba(212,175,55,0.2)] sm:size-[120px]">
             <span className="font-display text-3xl font-black text-gold sm:text-4xl">
               {countdown}
             </span>
@@ -90,16 +92,18 @@ export default function RoundCompletePage() {
         </section>
 
         {/* Quick stats footer */}
-        <footer className="flex flex-wrap items-center justify-center gap-3 border-t border-border pt-6 sm:gap-4">
-          <StatPill
-            label="Round 3 MVP"
-            value={`${mvp.team} (+${mvp.delta} coins)`}
-          />
-          <StatPill
-            label="Biggest Bet"
-            value={`${biggestBet.team} (${biggestBet.amount} on ${biggestBet.option})`}
-          />
-          <StatPill label="Side Bet Winners" value={`${sideBetWinners} teams`} />
+        <footer className="game-stagger-in game-animate flex flex-wrap items-center justify-center gap-3 border-t border-border pt-6 sm:gap-4" style={{ animationDelay: "240ms" }}>
+          <StaggerIn className="flex flex-wrap items-center justify-center gap-3 sm:gap-4" stepMs={60}>
+            <StatPill
+              label="Round 3 MVP"
+              value={`${mvp.team} (+${mvp.delta} coins)`}
+            />
+            <StatPill
+              label="Biggest Bet"
+              value={`${biggestBet.team} (${biggestBet.amount} on ${biggestBet.option})`}
+            />
+            <StatPill label="Side Bet Winners" value={`${sideBetWinners} teams`} />
+          </StaggerIn>
         </footer>
       </PageContainer>
     </ScrollPage>
@@ -108,7 +112,7 @@ export default function RoundCompletePage() {
 
 function StatPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border bg-bg-card px-4 py-2 text-sm">
+    <div className="game-card rounded-lg border border-border bg-bg-card px-4 py-2 text-sm">
       <span className="text-text-muted-alt">{label}</span>{" "}
       <span className="font-semibold text-gold-light">{value}</span>
     </div>

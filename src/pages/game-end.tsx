@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Crown, Spade, Diamond } from "lucide-react";
 import { ViewportFitPage } from "@/components/layout/page-layouts";
+import { GameConfetti } from "@/components/layout/game-ui";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
 import { TOTAL_ROUNDS } from "@/data/game-data";
-import { cn } from "@/lib/utils";
 
 export default function GameEndPage() {
   const navigate = useNavigate();
@@ -16,32 +16,11 @@ export default function GameEndPage() {
       <Spade className="pointer-events-none absolute left-6 top-24 size-20 text-white/[0.03] sm:left-12 sm:size-28" />
       <Diamond className="pointer-events-none absolute bottom-24 right-6 size-20 text-white/[0.03] sm:right-12 sm:size-28" />
 
-      {/* Confetti accents */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {[
-          { top: "12%", left: "8%", color: "bg-gold", rotate: "rotate-[25deg]" },
-          { top: "8%", left: "22%", color: "bg-red-500", rotate: "-rotate-[15deg]" },
-          { top: "18%", right: "15%", color: "bg-[#e09c6a]", rotate: "rotate-45" },
-          { top: "35%", left: "5%", color: "bg-green", rotate: "rotate-[30deg]" },
-          { top: "55%", right: "8%", color: "bg-gold", rotate: "-rotate-[12deg]" },
-          { bottom: "20%", left: "18%", color: "bg-white/80", rotate: "rotate-[10deg]" },
-          { bottom: "15%", right: "20%", color: "bg-red-500/80", rotate: "-rotate-[35deg]" },
-        ].map((c, i) => (
-          <span
-            key={i}
-            className={cn(
-              "absolute h-5 w-2.5 rounded-sm opacity-80 sm:h-6 sm:w-3",
-              c.color,
-              c.rotate,
-            )}
-            style={{ top: c.top, left: c.left, right: c.right, bottom: c.bottom }}
-          />
-        ))}
-      </div>
+      <GameConfetti />
 
       <div className="relative flex w-full max-w-4xl flex-col items-center justify-between gap-6 py-6 sm:gap-8 sm:py-8">
         {/* Top branding + nav */}
-        <div className="flex w-full flex-wrap items-center justify-between gap-4">
+        <div className="game-stagger-in game-animate flex w-full flex-wrap items-center justify-between gap-4">
           <div>
             <p className="font-display text-xl font-extrabold text-white sm:text-2xl">
               THE CULTURE TABLE
@@ -52,8 +31,8 @@ export default function GameEndPage() {
         </div>
 
         {/* Celebration center */}
-        <div className="flex flex-col items-center gap-6 text-center sm:gap-8">
-          <div className="flex aspect-[8/5] w-32 items-center justify-center rounded-full border-2 border-gold bg-[rgba(17,21,32,0.92)] p-6 shadow-[0_0_32px_rgba(212,175,55,0.25)] sm:w-40">
+        <div className="game-stagger-in game-animate flex flex-col items-center gap-6 text-center sm:gap-8" style={{ animationDelay: "80ms" }}>
+          <div className="game-coin-pulse game-animate flex aspect-[8/5] w-32 items-center justify-center rounded-full border-2 border-gold bg-[rgba(17,21,32,0.92)] p-6 shadow-[0_0_32px_rgba(212,175,55,0.25)] sm:w-40">
             <Crown className="size-14 text-gold sm:size-16" strokeWidth={1.5} />
           </div>
           <div>
@@ -76,9 +55,9 @@ export default function GameEndPage() {
         </div>
 
         {/* Bottom actions */}
-        <div className="flex flex-col items-center gap-4">
+        <div className="game-stagger-in game-animate flex flex-col items-center gap-4" style={{ animationDelay: "160ms" }}>
           <div className="flex items-center gap-2">
-            <span className="size-2 animate-pulse rounded-full bg-gold" />
+            <span className="game-live-dot size-2 rounded-full bg-gold" />
             <p className="text-sm font-semibold uppercase text-gold">
               Preparing final results...
             </p>
@@ -86,7 +65,7 @@ export default function GameEndPage() {
           <button
             type="button"
             onClick={() => navigate("/scores")}
-            className="text-[13px] font-semibold uppercase text-gold underline underline-offset-2 hover:text-gold-light"
+            className="game-btn text-[13px] font-semibold uppercase text-gold underline underline-offset-2 hover:text-gold-light"
           >
             View Final Scores
           </button>

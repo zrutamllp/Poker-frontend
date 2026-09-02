@@ -33,7 +33,7 @@ export function Badge({ children, className, variant = "muted" }: BadgeProps) {
 export function LiveBadge() {
   return (
     <span className="inline-flex items-center gap-1.5 rounded border border-[#219653] bg-[rgba(226,240,217,0.08)] px-2.5 py-1 text-[11px] font-bold uppercase text-[#219653]">
-      <span className="size-2 animate-pulse rounded-full bg-[#219653]" />
+      <span className="game-live-dot size-2 rounded-full bg-[#219653]" />
       BROADCAST LIVE
     </span>
   );

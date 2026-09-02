@@ -1,4 +1,5 @@
 import { Clock } from "lucide-react";
+import { AnimatedValue } from "@/components/layout/game-ui";
 import { cn } from "@/lib/utils";
 
 interface GameTopBarProps {
@@ -53,7 +54,7 @@ export function GameTopBar({
             $
           </span>
           <span className="text-sm font-bold text-white sm:text-[15px]">
-            {cultureCoins}{" "}
+            <AnimatedValue value={cultureCoins} />{" "}
             <span className="text-[13px] text-gold">Culture Coins</span>
           </span>
         </div>

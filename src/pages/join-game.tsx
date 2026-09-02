@@ -27,7 +27,8 @@ export default function JoinGamePage() {
 
         <form
           onSubmit={handleSubmit}
-          className="relative w-full rounded-2xl border-2 border-gold p-6 shadow-[0_24px_48px_rgba(0,0,0,0.65)] sm:rounded-3xl sm:p-10"
+          className="game-card game-stagger-in game-animate relative w-full rounded-2xl border-2 border-gold p-6 shadow-[0_24px_48px_rgba(0,0,0,0.65)] sm:rounded-3xl sm:p-10"
+          style={{ animationDelay: "80ms" }}
         >
           <div className="absolute inset-0 rounded-2xl bg-bg-card-alt/95 sm:rounded-3xl" />
           <div className="relative flex flex-col gap-5 sm:gap-8">
