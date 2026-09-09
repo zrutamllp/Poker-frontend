@@ -1,13 +1,4 @@
-import {
-  getHangmanPool,
-  getLadderPool,
-  getWheelPool,
-  getWheelSegments,
-  pickAnagramPuzzles,
-  pickGeoRound,
-  pickLexicodeWord,
-  pickRandom,
-} from "@/data/minigame-puzzles";
+import { pickFakeOneSession, pickHangmanRound, pickLexicodeWord } from "@/data/minigame-puzzles";
 import { getGameLimits } from "@/lib/minigame-difficulty";
 import type { MinigameDifficulty } from "@/lib/minigame-difficulty";
 import type { MinigameId, MinigameSessionPayload } from "@/types/minigame-session";
@@ -25,48 +16,17 @@ export function createLocalSession<G extends MinigameId>(
   const limits = getGameLimits(gameId, difficulty);
 
   switch (gameId) {
-    case "anagram": {
-      const puzzles = pickAnagramPuzzles(
-        difficulty,
-        getGameLimits("anagram", difficulty).puzzlesPerRound,
-      );
+    case "hangman": {
+      const hangmanLimits = getGameLimits("hangman", difficulty);
       return {
         gameId,
         difficulty,
         attemptNumber,
         attemptsRemaining: Number.POSITIVE_INFINITY,
-        puzzles,
-        limits,
+        puzzles: pickHangmanRound(difficulty, hangmanLimits.rounds),
+        limits: hangmanLimits,
       } as MinigameSessionPayload<G>;
     }
-    case "hangman":
-      return {
-        gameId,
-        difficulty,
-        attemptNumber,
-        attemptsRemaining: Number.POSITIVE_INFINITY,
-        puzzles: pickRandom(getHangmanPool(difficulty)),
-        limits,
-      } as MinigameSessionPayload<G>;
-    case "ladder":
-      return {
-        gameId,
-        difficulty,
-        attemptNumber,
-        attemptsRemaining: Number.POSITIVE_INFINITY,
-        puzzles: pickRandom(getLadderPool(difficulty)),
-        limits,
-      } as MinigameSessionPayload<G>;
-    case "wheel":
-      return {
-        gameId,
-        difficulty,
-        attemptNumber,
-        attemptsRemaining: Number.POSITIVE_INFINITY,
-        puzzles: pickRandom(getWheelPool(difficulty)),
-        limits,
-        wheelSegments: getWheelSegments(difficulty),
-      } as MinigameSessionPayload<G>;
     case "picture":
       return {
         gameId,
@@ -85,15 +45,17 @@ export function createLocalSession<G extends MinigameId>(
         puzzles: pickLexicodeWord(difficulty),
         limits,
       } as MinigameSessionPayload<G>;
-    case "geo":
+    case "geo": {
+      const geoLimits = getGameLimits("geo", difficulty);
       return {
         gameId,
         difficulty,
         attemptNumber,
         attemptsRemaining: Number.POSITIVE_INFINITY,
-        puzzles: pickGeoRound(difficulty, getGameLimits("geo", difficulty).rounds),
-        limits,
+        puzzles: pickFakeOneSession(difficulty, geoLimits.totalRounds),
+        limits: geoLimits,
       } as MinigameSessionPayload<G>;
+    }
     default:
       throw new Error(`Unknown minigame: ${gameId}`);
   }

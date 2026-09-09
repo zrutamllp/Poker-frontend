@@ -18,32 +18,34 @@ export const DIFFICULTY_LABELS: Record<MinigameDifficulty, string> = {
 
 export const GAME_LIMITS = {
   hangman: {
-    standard: { maxWrong: 6, hintsMax: 2 },
-    high_stakes: { maxWrong: 4, hintsMax: 1 },
-  },
-  anagram: {
-    standard: { puzzlesPerRound: 3, seconds: 60 },
-    high_stakes: { puzzlesPerRound: 4, seconds: 45 },
-  },
-  ladder: {
-    standard: { hintsMax: 1 },
-    high_stakes: { hintsMax: 0 },
-  },
-  wheel: {
-    standard: { maxWrong: 6, vowelCost: 0 },
-    high_stakes: { maxWrong: 4, vowelCost: 250 },
+    standard: {
+      rounds: 6,
+      secondsPerRound: 30,
+      maxWrong: 6,
+      pointsPerWin: 200,
+      maxScore: 1200,
+      winScore: 1000,
+    },
+    high_stakes: {
+      rounds: 6,
+      secondsPerRound: 30,
+      maxWrong: 4,
+      pointsPerWin: 200,
+      maxScore: 1200,
+      winScore: 1000,
+    },
   },
   picture: {
-    standard: { gridSize: 4, seconds: 300, hintsMax: 3 },
-    high_stakes: { gridSize: 4, seconds: 180, hintsMax: 1 },
+    standard: { gridSize: 4, seconds: 300, confirmsMax: 3, winScore: 1200, maxScore: 1200 },
+    high_stakes: { gridSize: 4, seconds: 300, confirmsMax: 3, winScore: 1200, maxScore: 1200 },
   },
   lexicode: {
-    standard: { maxGuesses: 6, wordLength: 5 },
-    high_stakes: { maxGuesses: 5, wordLength: 5 },
+    standard: { hintsMax: 3, seconds: 120, winScore: 1000, maxScore: 1000 },
+    high_stakes: { hintsMax: 1, seconds: 120, winScore: 1000, maxScore: 1000 },
   },
   geo: {
-    standard: { rounds: 5, winScore: 3200 },
-    high_stakes: { rounds: 5, winScore: 4000 },
+    standard: { totalRounds: 10, winScore: 1000, maxScore: 2400 },
+    high_stakes: { totalRounds: 10, winScore: 1000, maxScore: 2400 },
   },
 } as const;
 
@@ -51,9 +53,6 @@ export type MinigameId = keyof typeof GAME_LIMITS;
 
 export type GameLimitsMap = {
   hangman: (typeof GAME_LIMITS)["hangman"][MinigameDifficulty];
-  anagram: (typeof GAME_LIMITS)["anagram"][MinigameDifficulty];
-  ladder: (typeof GAME_LIMITS)["ladder"][MinigameDifficulty];
-  wheel: (typeof GAME_LIMITS)["wheel"][MinigameDifficulty];
   picture: (typeof GAME_LIMITS)["picture"][MinigameDifficulty];
   lexicode: (typeof GAME_LIMITS)["lexicode"][MinigameDifficulty];
   geo: (typeof GAME_LIMITS)["geo"][MinigameDifficulty];
@@ -74,57 +73,36 @@ export const MINIGAME_COPY = {
   retry: "Retry Session",
   winReward: "+1000 CC credited to team balance",
   difficulty: "Difficulty Tier",
-  anagram: {
-    label: "DECODE BRIEF",
-    prompt: "Reconstruct the classified phrase from scrambled intel.",
-    win: "Brief decoded.",
-    lose: "Time expired — intel withheld.",
-    correct: "Verified.",
-    wrong: "Sequence invalid — reattempt.",
-  },
-  ladder: {
-    label: "THE CLIMB",
-    prompt: "Advance one letter at a time toward the target term.",
-    win: "Ladder cleared.",
-    lose: "Step limit reached.",
-    climb: "SUBMIT RUNG",
-    placeholder: "Enter next term…",
-  },
-  wheel: {
-    label: "HIGH STAKES WHEEL",
-    prompt: "Spin, then call letters to decode the board phrase.",
-    win: "Phrase secured.",
-    lose: "Margin exhausted.",
-    spin: "SPIN WHEEL",
-    spinning: "Resolving…",
-  },
   hangman: {
     label: "WORD HUNT",
-    win: "Term identified.",
-    lose: "Attempts exhausted.",
+    win: "Round solved.",
+    lose: "Round lost.",
   },
   picture: {
     label: "PICTURE SLIDER",
-    prompt: "Slide tiles into place to restore the reference image.",
-    win: "Image reconstructed.",
-    lose: "Time expired — puzzle archived.",
+    prompt: "Slide tiles into place, then press Confirm when the image matches the reference.",
+    win: "Image reconstructed — 1200 points.",
+    lose: "Session ended — 0 points.",
+    loseWrongConfirm: "Incorrect — no confirms left.",
+    loseTimeout: "Time expired — puzzle archived.",
+    loseSessionExpired: "15-minute session ended — 0 points.",
     shuffle: "SHUFFLE BOARD",
-    hint: "INTEL HINT",
+    confirm: "CONFIRM",
     reset: "RESET BOARD",
   },
   lexicode: {
-    label: "LEXICODE",
-    prompt: "Decode the five-letter table term in limited attempts.",
-    win: "Lexicon cracked.",
-    lose: "Attempts exhausted.",
+    label: "DAILY CROSSWORD",
+    prompt: "Tap clues or cells to navigate. Use Check and Hint when stuck.",
+    win: "Crossword complete — 1000 points.",
+    lose: "Time expired — 0 points.",
+    loseSessionExpired: "15-minute session ended — 0 points.",
   },
   geo: {
-    label: "WORLD SCOUT",
-    prompt: "Find the country on the world map and drop your pin.",
-    win: "All sectors verified.",
-    lose: "Score threshold missed.",
-    confirm: "CONFIRM GUESS",
-    next: "NEXT SECTOR",
+    label: "THE FAKE ONE",
+    prompt: "Three statements are true. One is fake. Find it before time runs out.",
+    win: "Session complete — culture coins earned.",
+    lose: "Session ended below the win threshold.",
+    loseSessionExpired: "15-minute session ended.",
   },
 } as const;
 

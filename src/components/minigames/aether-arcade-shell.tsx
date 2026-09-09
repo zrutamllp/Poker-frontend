@@ -1,48 +1,111 @@
-import { Gamepad2 } from "lucide-react";
+import type { ReactNode } from "react";
+import { Diamond, Spade } from "lucide-react";
 import { MinigameAmbientFx } from "@/components/minigames/minigame-motion";
+import { minigameTheme as theme } from "@/components/minigames/minigame-theme";
+import { NavIconBar } from "@/components/layout/nav-icon-bar";
+import { GlobalSessionTimer } from "@/components/minigames/global-session-timer";
 import { cn } from "@/lib/utils";
 
 interface AetherArcadeShellProps {
   gameLabel: string;
+  subtitle?: string;
   children: React.ReactNode;
   className?: string;
   contentClassName?: string;
+  /** Full-width custom header (e.g. crossword title block) */
+  header?: ReactNode;
+  /** Right side of default header (score, pause, etc.) */
+  headerActions?: ReactNode;
 }
 
-/** Shared Aether Arcade platform chrome for culture-coin minigames */
+/** Shared culture-table shell for all minigames */
 export function AetherArcadeShell({
   gameLabel,
+  subtitle,
   children,
   className,
   contentClassName,
+  header,
+  headerActions,
 }: AetherArcadeShellProps) {
   return (
     <div
       className={cn(
-        "relative flex h-dvh flex-col overflow-hidden border-2 border-[#28254a] bg-[#080711]",
+        "relative flex h-dvh flex-col overflow-hidden",
+        theme.pageBg,
         className,
       )}
     >
       <MinigameAmbientFx />
+      <Spade className="pointer-events-none absolute left-8 top-16 size-32 text-white/[0.03] sm:size-40" />
+      <Diamond className="pointer-events-none absolute bottom-24 right-8 size-32 text-white/[0.03] sm:size-40" />
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
+        {header ? (
+          <div
+            className={cn(
+              "flex shrink-0 items-center justify-between gap-2 border-b px-[clamp(10px,2.5vw,24px)] py-[clamp(6px,1.2vh,10px)]",
+              theme.header,
+            )}
+          >
+            {header}
+            <div className="flex shrink-0 items-center gap-2">
+              <GlobalSessionTimer />
+              <NavIconBar />
+            </div>
+          </div>
+        ) : (
+          <header
+            className={cn(
+              "relative shrink-0 border-b px-[clamp(10px,2.5vw,24px)] py-[clamp(6px,1.2vh,10px)]",
+              theme.header,
+            )}
+          >
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <div className="mb-0.5 flex items-center gap-1.5">
+                  <Spade className="size-3 text-gold-light sm:size-3.5" />
+                  <span
+                    className="font-extrabold uppercase tracking-wide text-gold-light"
+                    style={{ fontSize: "clamp(9px, 1.6vh, 10px)" }}
+                  >
+                    The culture table
+                  </span>
+                  <Diamond className="size-3 text-gold-light sm:size-3.5" />
+                </div>
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0">
+                  <p
+                    className="truncate font-serif font-black text-gold-light"
+                    style={{ fontSize: "clamp(14px, 2.6vh, 20px)" }}
+                  >
+                    {gameLabel}
+                  </p>
+                  {subtitle && (
+                    <p
+                      className="truncate text-text-muted"
+                      style={{ fontSize: "clamp(9px, 1.6vh, 10px)" }}
+                    >
+                      · {subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                {headerActions}
+                <GlobalSessionTimer />
+                <NavIconBar />
+              </div>
+            </div>
+          </header>
+        )}
 
-      <header className="mg-header-pulse relative z-10 flex h-[72px] shrink-0 items-center justify-between border-b border-[#28254a] bg-[#121124]/95 px-4 backdrop-blur-sm sm:px-8">
-        <div className="flex items-center gap-3">
-          <span className="flex size-9 animate-[mg-correct-pulse_2s_ease-in-out_infinite] items-center justify-center rounded-lg bg-[#8b5cf6] shadow-[0_0_6px_rgba(139,92,246,0.5)]">
-            <Gamepad2 className="size-5 text-white" />
-          </span>
-          <span className="font-display text-lg font-extrabold tracking-wide text-white sm:text-xl">
-            AETHER ARCADE
-          </span>
+        <div
+          className={cn(
+            "relative flex min-h-0 flex-1 flex-col",
+            contentClassName ?? "overflow-y-auto",
+          )}
+        >
+          {children}
         </div>
-
-        <div className="hidden items-center gap-2 rounded-[20px] border border-[#28254a] bg-[#1a1935] px-4 py-1.5 sm:flex">
-          <span className="size-2 animate-[mg-pin-pulse_1.5s_ease-in-out_infinite] rounded-full bg-[#06b6d4] shadow-[0_0_8px_#06b6d4]" />
-          <span className="text-sm font-semibold text-white">{gameLabel}</span>
-        </div>
-      </header>
-
-      <div className={cn("relative z-10 min-h-0 flex-1 overflow-y-auto", contentClassName)}>
-        {children}
       </div>
     </div>
   );

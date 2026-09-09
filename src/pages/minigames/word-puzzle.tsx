@@ -1,49 +1,36 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AetherArcadeShell } from "@/components/minigames/aether-arcade-shell";
-import { MotionBoard, MotionKey, MotionPanel, MotionTile, staggerDelay } from "@/components/minigames/minigame-motion";
+import { CrosswordClues, CurrentClueBanner } from "@/components/crossword/CrosswordClues";
+import { CrosswordCompletion } from "@/components/crossword/CrosswordCompletion";
+import { CrosswordGrid } from "@/components/crossword/CrosswordGrid";
+import { CrosswordHeader } from "@/components/crossword/CrosswordHeader";
+import { CrosswordKeyboard } from "@/components/crossword/CrosswordKeyboard";
+import { CrosswordToolbar } from "@/components/crossword/CrosswordToolbar";
+import { crosswordTheme as t } from "@/components/crossword/crossword-theme";
+import { MinigameIntroGate } from "@/components/minigames/minigame-intro-gate";
 import { MinigameInstructionsPanel } from "@/components/minigames/minigame-instructions-panel";
-import { MinigameResult, MinigameSidebar } from "@/components/minigames/minigame-sidebar";
+import { MinigameResult } from "@/components/minigames/minigame-sidebar";
+import {
+  MinigameViewport,
+  MinigameViewportFooter,
+  MinigameViewportMain,
+} from "@/components/minigames/minigame-viewport";
+import { useMinigameIntro } from "@/hooks/use-minigame-intro";
 import { MinigameViewTabs, type MinigameView } from "@/components/minigames/minigame-view-tabs";
-import { getLexicodeDictionary } from "@/data/minigame-puzzles";
+import { getCrosswordById, getCrosswordForTier } from "@/data/crossword-puzzles";
+import { useCrosswordGame } from "@/features/crossword/useCrosswordGame";
+import { getNextClueWord } from "@/features/crossword/crosswordNavigation";
 import { useMinigameOutcomeSubmit, useMinigameSession } from "@/hooks/use-minigame-session";
 import { getGameLimits, MINIGAME_COPY } from "@/lib/minigame-difficulty";
-import {
-  evaluateGuess,
-  mergeKeyStates,
-  WORD_LENGTH,
-  type LetterState,
-  isValidGuess,
-} from "@/lib/lexicode";
+import { effectiveGameSeconds } from "@/lib/minigame-session-timer";
 import { cn } from "@/lib/utils";
 
-const WinCelebrationOverlay = lazy(
-  () => import("@/components/minigames/win-celebration-overlay"),
-);
-
-const KEYBOARD_ROWS = [
-  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "DELETE"],
-];
-
-const tileColors: Record<LetterState, string> = {
-  correct: "bg-[#06b6d4] border-[#06b6d4]",
-  present: "bg-[#f59e0b] border-[#f59e0b]",
-  absent: "bg-[#2e2d4d] border-[#2e2d4d]",
-  empty: "bg-[#1a1935] border-[#28254a]",
-  pending: "bg-[#1a1935] border-[#28254a]",
-};
-
-const keyColors: Record<LetterState, string> = {
-  correct: "bg-[#06b6d4] border-[#06b6d4] text-white",
-  present: "bg-[#f59e0b] border-[#28254a] text-white",
-  absent: "bg-[#2e2d4d] border-[#28254a] text-[#64618a]",
-  empty: "bg-[#1a1935] border-[#28254a] text-white",
-  pending: "bg-[#1a1935] border-[#28254a] text-white",
-};
-
-type Status = "playing" | "won" | "lost";
+function formatTime(seconds: number): string {
+  const m = Math.floor(Math.max(0, seconds) / 60);
+  const s = Math.max(0, seconds) % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
 
 export default function WordPuzzlePage() {
   const navigate = useNavigate();
@@ -51,251 +38,238 @@ export default function WordPuzzlePage() {
     session,
     sessionVersion,
     loading,
+    difficulty,
+    submitResult,
     canRetry,
     isOnlineMode,
     attemptsRemaining,
     startSession,
-    submitResult,
-    difficulty,
   } = useMinigameSession("lexicode");
-  const limits = session?.limits ?? getGameLimits("lexicode", difficulty);
-  const dictionary = useMemo(() => getLexicodeDictionary(), []);
 
-  const [gameState, setGameState] = useState(() => ({
-    answer: "",
-    category: "",
-    guesses: [] as { word: string; states: LetterState[] }[],
-    current: "",
-    revealRow: null as number | null,
-  }));
+  const limits = session?.limits ?? getGameLimits("lexicode", difficulty);
   const [view, setView] = useState<MinigameView>("play");
-  const { answer, category, guesses, current, revealRow } = gameState;
+  const [timeLeft, setTimeLeft] = useState<number>(limits.seconds);
+  const { introAcked, ackIntro } = useMinigameIntro(sessionVersion);
+  const submittedRef = useRef(false);
+
+  const puzzle = useMemo(() => {
+    const puzzleId = session?.puzzles?.puzzleId;
+    if (puzzleId) {
+      return getCrosswordById(puzzleId) ?? getCrosswordForTier(difficulty);
+    }
+    return getCrosswordForTier(difficulty);
+  }, [session?.puzzles?.puzzleId, difficulty]);
+
+  const onComplete = useCallback(() => {
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+  }, []);
+
+  const timedOut = timeLeft <= 0;
+  const sessionEnded = timedOut;
+
+  const game = useCrosswordGame({
+    puzzle,
+    hintsMax: limits.hintsMax,
+    onComplete,
+    timerActive: introAcked && !sessionEnded,
+    inputLocked: sessionEnded,
+  });
 
   useEffect(() => {
-    if (!session?.puzzles) return;
-    const p = session.puzzles;
-    setGameState({
-      answer: p.word,
-      category: p.category,
-      guesses: [],
-      current: "",
-      revealRow: null,
-    });
-  }, [session, sessionVersion]);
+    if (!session) return;
+    setTimeLeft(effectiveGameSeconds(session.limits.seconds));
+    submittedRef.current = false;
+    game.resetProgress();
+  }, [session, sessionVersion, game.resetProgress]);
 
-  const status: Status = useMemo(() => {
-    if (guesses.some((g) => g.word === answer)) return "won";
-    if (guesses.length >= limits.maxGuesses) return "lost";
-    return "playing";
-  }, [guesses, answer, limits.maxGuesses]);
+  const status = game.progress.completed ? "won" : timedOut ? "lost" : "playing";
+  const playing = introAcked && status === "playing" && view === "play";
+  const showViewTabs = !playing;
+  const totalScore = status === "won" ? limits.winScore : status === "lost" ? 0 : undefined;
 
-  const keyStates = useMemo(() => mergeKeyStates(guesses), [guesses]);
-
-  useMinigameOutcomeSubmit(status, submitResult, { guesses: guesses.length }, undefined, sessionVersion);
-
-  const startNewSession = useCallback(() => {
-    void startSession();
-  }, [startSession]);
-
-  const submitGuess = useCallback(() => {
-    if (status !== "playing" || current.length !== WORD_LENGTH) return;
-    if (!isValidGuess(current, dictionary)) return;
-
-    const states = evaluateGuess(current, answer);
-    const rowIndex = guesses.length;
-
-    setGameState((s) => ({
-      ...s,
-      revealRow: rowIndex,
-      guesses: [...s.guesses, { word: current, states }],
-      current: "",
-    }));
-
-    window.setTimeout(() => {
-      setGameState((s) => ({ ...s, revealRow: null }));
-    }, 600);
-  }, [status, current, dictionary, answer, guesses.length]);
-
-  const pressKey = useCallback(
-    (key: string) => {
-      if (status !== "playing") return;
-      if (key === "ENTER") {
-        submitGuess();
-        return;
-      }
-      if (key === "DELETE") {
-        setGameState((s) => ({ ...s, current: s.current.slice(0, -1) }));
-        return;
-      }
-      if (key.length === 1 && current.length < WORD_LENGTH) {
-        setGameState((s) => ({ ...s, current: s.current + key }));
-      }
+  useMinigameOutcomeSubmit(
+    status,
+    submitResult,
+    {
+      elapsedSeconds: limits.seconds - timeLeft,
+      hintsUsed: game.progress.hintsUsed,
+      mistakes: game.progress.mistakes,
     },
-    [status, current, submitGuess],
+    totalScore,
+    sessionVersion,
   );
 
-  const totalRows = limits.maxGuesses;
-  const activeRow = guesses.length;
+  useEffect(() => {
+    if (!introAcked || status !== "playing" || view === "instructions") return;
+
+    const id = window.setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) {
+          window.clearInterval(id);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(id);
+  }, [introAcked, status, view, sessionVersion]);
+
+  const compactHeader = (
+    <CrosswordHeader
+      puzzle={puzzle}
+      timer={formatTime(timeLeft)}
+      timerUrgent={timeLeft <= 15 && status === "playing"}
+      answersLabel={`${game.wordProgress.completed} of ${game.wordProgress.total} answers`}
+    />
+  );
 
   if (loading && !session?.puzzles) {
     return (
-      <AetherArcadeShell gameLabel={MINIGAME_COPY.lexicode.label}>
-        <div className="flex min-h-[40vh] items-center justify-center p-8 text-[#9e9bbf]">
-          Loading session…
+      <AetherArcadeShell gameLabel={MINIGAME_COPY.lexicode.label} contentClassName="overflow-hidden">
+        <div className={cn("flex flex-1 items-center justify-center font-serif", t.body)}>
+          Loading today&apos;s crossword…
         </div>
       </AetherArcadeShell>
     );
   }
 
   return (
-    <AetherArcadeShell gameLabel={MINIGAME_COPY.lexicode.label}>
-      {(status === "won" || status === "lost") && (
-        <Suspense fallback={null}>
-          <WinCelebrationOverlay variant={status === "won" ? "win" : "loss"} />
-        </Suspense>
-      )}
-
-      <div className="flex flex-col gap-6 p-4 sm:flex-row sm:p-8">
-        <aside className="flex w-full shrink-0 flex-col gap-3 sm:w-[280px]">
-          <MinigameViewTabs view={view} onChange={setView} />
-          {view === "play" && (
-        <MinigameSidebar
-          difficulty={difficulty}
-          category={category}
-          onNewSession={startNewSession}
-          isOnlineMode={isOnlineMode}
-          attemptsRemaining={attemptsRemaining}
-          canRetry={canRetry}
-        >
-          <div className="flex justify-between">
-            <span className="text-[#64618a]">Attempts Used</span>
-            <span className="font-mono font-extrabold text-[#06b6d4]">
-              {guesses.length} / {limits.maxGuesses}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-[#64618a]">Letters</span>
-            <span className="font-mono font-extrabold text-white">{WORD_LENGTH}</span>
-          </div>
-        </MinigameSidebar>
+    <AetherArcadeShell
+      gameLabel={MINIGAME_COPY.lexicode.label}
+      subtitle={`2 min · ${limits.winScore} pts max`}
+      contentClassName="overflow-hidden"
+      header={compactHeader}
+    >
+      <MinigameIntroGate
+        gameId="lexicode"
+        difficulty={difficulty}
+        introAcked={introAcked}
+        onAck={ackIntro}
+        panelClassName={cn(t.card, "p-4")}
+      >
+        <MinigameViewport className="gap-[clamp(6px,1.2vh,12px)] px-[clamp(8px,2vw,16px)] py-[clamp(6px,1.2vh,12px)]">
+          {showViewTabs && (
+            <aside className="shrink-0 lg:w-44">
+              <MinigameViewTabs view={view} onChange={setView} />
+            </aside>
           )}
-        </aside>
 
-        {view === "instructions" ? (
-          <MinigameInstructionsPanel
-            gameId="lexicode"
-            difficulty={difficulty}
-            className="min-w-0 flex-1"
-          />
-        ) : (
-        <MotionBoard className="flex min-w-0 flex-1 flex-col items-center gap-6">
-          <MotionPanel className="text-center text-sm text-[#9e9bbf]">
-            {MINIGAME_COPY.lexicode.prompt}
-          </MotionPanel>
-
-          <div className="flex flex-col gap-1.5">
-            {Array.from({ length: totalRows }, (_, ri) => {
-              const guess = guesses[ri];
-              const isActive = ri === activeRow && status === "playing";
-              const isRevealing = revealRow === ri;
-              const letters =
-                guess?.word ??
-                (isActive ? current.padEnd(WORD_LENGTH, " ") : "     ");
-
-              return (
-                <div
-                  key={ri}
-                  className={cn("flex gap-1.5", isRevealing && "mg-row-flip mg-animate")}
-                >
-                  {Array.from({ length: WORD_LENGTH }, (_, ci) => {
-                    const letter = letters[ci]?.trim() ?? "";
-                    const state: LetterState =
-                      guess?.states[ci] ?? (letter ? "pending" : "empty");
-                    const motionState =
-                      state === "correct"
-                        ? "correct"
-                        : state === "present"
-                          ? "revealed"
-                          : state === "absent" && guess
-                            ? "wrong"
-                            : "idle";
-
-                    return (
-                      <MotionTile
-                        key={ci}
-                        delay={isRevealing ? staggerDelay(ci, 80) : staggerDelay(ci, 24)}
-                        state={guess ? motionState : "idle"}
-                        className={cn(
-                          "flex size-[52px] items-center justify-center rounded-lg border-2 font-display text-[22px] font-extrabold text-white",
-                          guess || letter ? tileColors[state] : tileColors.empty,
-                          isActive && !letter && "border-dashed",
-                        )}
-                      >
-                        {letter}
-                      </MotionTile>
-                    );
-                  })}
+          {view === "instructions" ? (
+            <MinigameInstructionsPanel
+              gameId="lexicode"
+              difficulty={difficulty}
+              className={cn("min-h-0 min-w-0 flex-1 overflow-y-auto p-4", t.card)}
+            />
+          ) : game.progress.completed ? (
+            <MinigameViewportMain className="items-center justify-center">
+              <CrosswordCompletion
+                elapsedSeconds={limits.seconds - timeLeft}
+                hintsUsed={game.progress.hintsUsed}
+                mistakes={game.progress.mistakes}
+                difficulty={puzzle.difficulty}
+                puzzleNumber={puzzle.number}
+                wordsTotal={game.wordProgress.total}
+                score={limits.winScore}
+                onContinue={() => navigate("/instructions")}
+              />
+            </MinigameViewportMain>
+          ) : timedOut ? (
+            <MinigameViewportMain className="items-center justify-center">
+              <MinigameResult
+                variant="lost"
+                title={MINIGAME_COPY.lexicode.lose}
+                subtitle={`${totalScore ?? 0} points`}
+                detail={`Hints used: ${game.progress.hintsUsed} · ${formatTime(limits.seconds - timeLeft)} elapsed`}
+                onRetry={() => void startSession()}
+                onBack={() => navigate("/instructions")}
+                canRetry={canRetry}
+                isOnlineMode={isOnlineMode}
+                attemptsRemaining={attemptsRemaining}
+              />
+            </MinigameViewportMain>
+          ) : (
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-[clamp(6px,1.2vh,12px)] lg:flex-row lg:gap-4">
+              <MinigameViewportMain className="min-w-0 gap-[clamp(6px,1.2vh,10px)]">
+                <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto py-1">
+                  <CrosswordGrid
+                    board={game.board}
+                    letters={game.progress.letters}
+                    selectedRow={game.progress.selectedRow}
+                    selectedCol={game.progress.selectedCol}
+                    direction={game.progress.direction}
+                    checkedCells={game.progress.checkedCells}
+                    onSelect={game.selectCell}
+                  />
                 </div>
-              );
-            })}
-          </div>
 
-          {status === "won" && (
-            <MinigameResult
-              variant="won"
-              title={MINIGAME_COPY.lexicode.win}
-              subtitle={MINIGAME_COPY.winReward}
-              onRetry={startNewSession}
-              onBack={() => navigate("/instructions")}
-              canRetry={canRetry}
-              isOnlineMode={isOnlineMode}
-              attemptsRemaining={attemptsRemaining}
-            />
-          )}
-          {status === "lost" && (
-            <MinigameResult
-              variant="lost"
-              title={MINIGAME_COPY.lexicode.lose}
-              detail={`Term: ${answer}`}
-              onRetry={startNewSession}
-              onBack={() => navigate("/instructions")}
-              canRetry={canRetry}
-              isOnlineMode={isOnlineMode}
-              attemptsRemaining={attemptsRemaining}
-            />
+                <div className="shrink-0 lg:hidden">
+                  <CurrentClueBanner word={game.activeWord} direction={game.progress.direction} />
+                </div>
+
+                <MinigameViewportFooter className="shrink-0 border-t-0 pt-0">
+                  <CrosswordToolbar
+                    hintsRemaining={game.hintsRemaining}
+                    onCheck={game.check}
+                    onHint={game.hint}
+                  />
+                  <p className={cn("mt-2 text-center text-xs", t.body)}>
+                    {MINIGAME_COPY.lexicode.prompt}
+                  </p>
+                </MinigameViewportFooter>
+              </MinigameViewportMain>
+
+              <aside className="hidden min-h-0 w-72 shrink-0 flex-col gap-3 overflow-hidden xl:w-80 lg:flex">
+                <div className={cn("min-h-0 flex-1 overflow-y-auto p-3", t.card)}>
+                  <CrosswordClues
+                    board={game.board}
+                    title="Across"
+                    words={game.getClues().across}
+                    activeWordId={game.activeWord?.direction === "across" ? game.activeWord.id : null}
+                    letters={game.progress.letters}
+                    onClueSelect={game.selectWord}
+                  />
+                </div>
+                <div className={cn("min-h-0 flex-1 overflow-y-auto p-3", t.card)}>
+                  <CrosswordClues
+                    board={game.board}
+                    title="Down"
+                    words={game.getClues().down}
+                    activeWordId={game.activeWord?.direction === "down" ? game.activeWord.id : null}
+                    letters={game.progress.letters}
+                    onClueSelect={game.selectWord}
+                  />
+                </div>
+              </aside>
+            </div>
           )}
 
-          <div className="flex w-full max-w-xl flex-col gap-1.5">
-            {KEYBOARD_ROWS.map((row, ri) => (
-              <div key={ri} className="flex justify-center gap-1.5">
-                {row.map((key) => {
-                  const isWide = key === "ENTER" || key === "DELETE";
-                  const state =
-                    key.length === 1 ? (keyStates[key] ?? "empty") : "empty";
-                  return (
-                    <MotionKey
-                      key={key}
-                      onClick={() => pressKey(key)}
-                      disabled={status !== "playing"}
-                      className={cn(
-                        "flex h-[46px] items-center justify-center rounded-md border font-bold",
-                        isWide ? "min-w-[70px] text-[11px]" : "w-[42px] text-[15px]",
-                        key.length === 1
-                          ? keyColors[state]
-                          : "border-[#28254a] bg-[#1a1935] text-[11px] text-white",
-                        status !== "playing" && "opacity-50",
-                      )}
-                    >
-                      {key}
-                    </MotionKey>
+          {playing && (
+            <MinigameViewportFooter className="shrink-0 lg:hidden">
+              <CrosswordKeyboard
+                onKey={game.setLetter}
+                onBackspace={game.backspace}
+                onPrev={() => {
+                  const next = getNextClueWord(game.board, game.activeWord?.id ?? null, true);
+                  if (next) game.selectCell(next.row, next.col, next.direction);
+                }}
+                onNext={() => {
+                  const next = getNextClueWord(game.board, game.activeWord?.id ?? null, false);
+                  if (next) game.selectCell(next.row, next.col, next.direction);
+                }}
+                onToggleDirection={() => {
+                  game.selectCell(
+                    game.progress.selectedRow,
+                    game.progress.selectedCol,
+                    game.progress.direction === "across" ? "down" : "across",
                   );
-                })}
-              </div>
-            ))}
-          </div>
-        </MotionBoard>
-        )}
-      </div>
+                }}
+              />
+            </MinigameViewportFooter>
+          )}
+        </MinigameViewport>
+      </MinigameIntroGate>
     </AetherArcadeShell>
   );
 }

@@ -13,8 +13,8 @@ export function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps)
       className={cn(
         "inline-flex items-center rounded-md border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide",
         isHigh
-          ? "border-[#f59e0b]/50 bg-[#f59e0b]/10 text-[#f59e0b]"
-          : "border-[#28254a] bg-[#1a1935] text-[#9e9bbf]",
+          ? "border-gold/50 bg-gold/10 text-gold-light"
+          : "border-gold-muted/50 bg-[#0c1f16] text-text-muted",
         className,
       )}
     >

@@ -76,15 +76,7 @@ export function getOfflineGameStatus(gameId: MinigameId): MinigameGameStatus {
 }
 
 export function getAllOfflineGameStatuses(): MinigameGameStatus[] {
-  const ids: MinigameId[] = [
-    "picture",
-    "lexicode",
-    "geo",
-    "anagram",
-    "hangman",
-    "ladder",
-    "wheel",
-  ];
+  const ids: MinigameId[] = ["picture", "hangman", "lexicode", "geo"];
   return ids.map(getOfflineGameStatus);
 }
 
@@ -165,14 +157,6 @@ export function getOnlineGameStatus(gameId: MinigameId): MinigameGameStatus {
 }
 
 export function getAllOnlineGameStatuses(): MinigameGameStatus[] {
-  const ids: MinigameId[] = [
-    "picture",
-    "lexicode",
-    "geo",
-    "anagram",
-    "hangman",
-    "ladder",
-    "wheel",
-  ];
+  const ids: MinigameId[] = ["picture", "hangman", "lexicode", "geo"];
   return ids.map(getOnlineGameStatus);
 }

@@ -8,13 +8,13 @@ import {
   Spade,
   Diamond,
 } from "lucide-react";
-import { DifficultySelector } from "@/components/minigames/difficulty-badge";
 import {
   cultureCoinGames,
   type GameCardStatus,
 } from "@/data/game-data";
-import { useMinigameDifficulty } from "@/hooks/use-minigame-difficulty";
+import { useMinigameGlobalTimer } from "@/hooks/use-minigame-global-timer";
 import { useMinigameLobbyStatus } from "@/hooks/use-minigame-lobby-status";
+import { formatSessionTime } from "@/lib/minigame-session-timer";
 import { GameCoin } from "@/components/layout/game-ui";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
 import { ScrollPage, PageContainer } from "@/components/layout/page-layouts";
@@ -26,14 +26,19 @@ const gameIcons = {
   star: Star,
 };
 
-const bentoSpans: Record<number, string> = {
-  1: "sm:col-span-2 lg:col-span-2",
-  2: "lg:col-span-1",
-  3: "lg:col-span-1",
-  4: "sm:col-span-2 lg:col-span-2",
-  5: "sm:col-span-2 lg:col-span-2",
-  6: "sm:col-span-2 lg:col-span-2",
-  7: "sm:col-span-2 lg:col-span-2",
+/** Bento placement for the 4 active culture-coin games */
+const bentoLayout: Record<number, string> = {
+  1: "sm:col-span-2 lg:col-span-3 lg:row-span-2",
+  2: "lg:col-span-3 lg:row-span-2",
+  3: "sm:col-span-1 lg:col-span-3",
+  4: "sm:col-span-1 lg:col-span-3",
+};
+
+const bentoAccent: Record<number, string> = {
+  1: "from-[#d4af37]/20 via-transparent to-transparent",
+  2: "from-[#8b5cf6]/15 via-transparent to-transparent",
+  3: "from-[#06b6d4]/15 via-transparent to-transparent",
+  4: "from-[#f59e0b]/12 via-transparent to-transparent",
 };
 
 function GameCardItem({
@@ -41,13 +46,15 @@ function GameCardItem({
   status,
   route,
   icon,
-  wide = false,
+  gameId,
+  featured = false,
 }: {
   title: string;
   status: GameCardStatus;
   route: string;
   icon: keyof typeof gameIcons;
-  wide?: boolean;
+  gameId: number;
+  featured?: boolean;
 }) {
   const navigate = useNavigate();
   const Icon = gameIcons[icon];
@@ -55,75 +62,59 @@ function GameCardItem({
   return (
     <article
       className={cn(
-        "game-card flex h-full flex-col gap-5 rounded-2xl border-[1.5px] border-gold-muted bg-[#0c1f16] p-6 shadow-lg sm:gap-5 sm:p-7",
-        wide && "sm:gap-4",
+        "game-card group relative flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-gold-muted/80 bg-[#0c1f16]/95 p-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.24)] backdrop-blur-sm sm:p-4",
       )}
     >
-      {wide ? (
-        <>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-            <div className="flex items-center gap-4">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-3xl border border-gold-muted bg-gold/10">
-                <Icon className="size-5 text-gold" />
-              </span>
-              <div>
-                <h3 className="font-serif text-xl font-black text-[#f3f4f6] sm:text-[22px]">
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                  Earn <span className="font-bold text-white">1000 culture coins</span> by
-                  completing this game.
-                </p>
-              </div>
-            </div>
-            <span className="shrink-0 self-start rounded-md border border-gold-muted bg-gold/10 px-2.5 py-1 text-[11px] font-bold uppercase text-gold-light">
-              {status === "completed" ? "COMPLETED" : "NOT STARTED"}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate(route)}
-            className="game-btn mt-auto w-full rounded-lg border border-green bg-green/10 px-3 py-2 text-left text-[13px] font-bold uppercase text-green hover:bg-green/20 sm:max-w-xs"
-          >
-            START GAME
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="flex items-center justify-between">
-            <span className="flex size-12 items-center justify-center rounded-3xl border border-gold-muted bg-gold/10">
-              <Icon className="size-5 text-gold" />
-            </span>
-            <span className="rounded-md border border-gold-muted bg-gold/10 px-2.5 py-1 text-[11px] font-bold uppercase text-gold-light">
-              {status === "completed" ? "COMPLETED" : "NOT STARTED"}
-            </span>
-          </div>
-          <div>
-            <h3 className="font-serif text-xl font-black text-[#f3f4f6] sm:text-[22px]">
-              {title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-text-muted">
-              Earn <span className="font-bold text-white">1000 culture coins</span> by
-              completing this game.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate(route)}
-            className="game-btn mt-auto w-full rounded-lg border border-green bg-green/10 px-3 py-2 text-left text-[13px] font-bold uppercase text-green hover:bg-green/20"
-          >
-            START GAME
-          </button>
-        </>
-      )}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 bg-gradient-to-br opacity-100 transition-opacity group-hover:opacity-100",
+          bentoAccent[gameId] ?? "from-gold/10 via-transparent to-transparent",
+        )}
+      />
+      <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full bg-gold/5 blur-2xl" />
+
+      <div className="relative flex items-start justify-between gap-2">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-gold-muted/70 bg-gold/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+          <Icon className="size-4 text-gold" />
+        </span>
+        <span className="rounded-full border border-gold-muted/60 bg-black/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gold-light">
+          {status === "completed" ? "Completed" : "Not started"}
+        </span>
+      </div>
+
+      <div className="relative mt-2.5 flex flex-1 flex-col">
+        <h3
+          className={cn(
+            "font-serif font-black leading-tight text-[#f3f4f6]",
+            featured ? "text-lg sm:text-xl" : "text-base sm:text-lg",
+          )}
+        >
+          {title}
+        </h3>
+        <p className="mt-1 max-w-sm text-xs leading-snug text-text-muted">
+          Earn <span className="font-bold text-white">1000 culture coins</span> by completing
+          this game.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => navigate(route)}
+        className={cn(
+          "game-btn relative mt-3 w-full rounded-lg border border-green/60 bg-green/10 px-3 py-1.5 text-left text-[11px] font-bold uppercase tracking-wide text-green transition-colors hover:bg-green/20",
+          featured ? "sm:max-w-[10rem]" : "",
+        )}
+      >
+        Start game
+      </button>
     </article>
   );
 }
 
 export default function InstructionsPage() {
   const navigate = useNavigate();
-  const { difficulty, setDifficulty } = useMinigameDifficulty();
   const { statusForRoute, refresh } = useMinigameLobbyStatus();
+  const { timeLeft, started, expired } = useMinigameGlobalTimer();
 
   useEffect(() => {
     const onFocus = () => refresh();
@@ -137,49 +128,55 @@ export default function InstructionsPage() {
       <Diamond className="pointer-events-none absolute bottom-24 right-8 size-32 text-white/[0.03] sm:size-40" />
       <NavIconBar className="absolute right-4 top-4 z-10 sm:right-6 sm:top-4" />
 
-      <PageContainer maxWidth="max-w-6xl" className="relative py-10 sm:py-14">
-        <header className="game-stagger-in game-animate mb-10 flex flex-col items-center gap-3 text-center sm:mb-12">
-          <div className="flex items-center gap-4">
-            <Spade className="size-6 text-gold-light" />
-            <span className="text-sm font-extrabold uppercase tracking-wide text-gold-light">
+      <PageContainer maxWidth="max-w-4xl" className="relative py-8 sm:py-10">
+        <header className="game-stagger-in game-animate mb-7 flex flex-col items-center gap-2 text-center sm:mb-8">
+          <div className="flex items-center gap-3">
+            <Spade className="size-5 text-gold-light" />
+            <span className="text-xs font-extrabold uppercase tracking-wide text-gold-light">
               The culture table
             </span>
-            <Diamond className="size-6 text-gold-light" />
+            <Diamond className="size-5 text-gold-light" />
           </div>
-          <h1 className="font-serif text-4xl font-black text-gold-light sm:text-[44px]">
+          <h1 className="font-serif text-3xl font-black text-gold-light sm:text-4xl">
             WIN CULTURE COINS
           </h1>
-          <p className="max-w-2xl text-base text-text-muted">
+          <p className="max-w-xl text-sm text-text-muted">
             Your chance to win extra culture coins. Complete as many games as possible in
             15 minutes. Each completed game gets you coins.
           </p>
+          {started && (
+            <p
+              className={cn(
+                "font-mono text-sm font-bold tabular-nums",
+                expired ? "text-gold-light" : timeLeft <= 60 ? "animate-pulse text-gold-light" : "text-green",
+              )}
+            >
+              Session time left: {expired ? "00:00" : formatSessionTime(timeLeft)}
+            </p>
+          )}
         </header>
 
-        <div className="game-stagger-in game-animate mb-10 sm:mb-12" style={{ animationDelay: "60ms" }}>
-          <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6 lg:auto-rows-[220px] lg:gap-3.5">
+          {cultureCoinGames.map((game, i) => (
+            <div
+              key={game.id}
+              className={cn(
+                bentoLayout[game.id] ?? "",
+                "game-stagger-in game-animate min-h-[220px] lg:min-h-0",
+              )}
+              style={{ animationDelay: `${Math.min(i * 55, 400)}ms` }}
+            >
+              <GameCardItem
+                {...game}
+                gameId={game.id}
+                status={statusForRoute(game.route)}
+                featured={game.id === 1}
+              />
+            </div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-5">
-          {cultureCoinGames.map((game, i) => {
-            const span = bentoSpans[game.id] ?? "";
-            const wide = span.includes("col-span-2");
-            return (
-              <div
-                key={game.id}
-                className={cn(span, "game-stagger-in game-animate min-h-[200px]")}
-                style={{ animationDelay: `${Math.min(i * 55, 400)}ms` }}
-              >
-                <GameCardItem
-                  {...game}
-                  status={statusForRoute(game.route)}
-                  wide={wide}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        <footer className="game-stagger-in game-animate mt-12 flex flex-col items-center gap-6 border-t border-border pt-8 sm:mt-14" style={{ animationDelay: "120ms" }}>
+        <footer className="game-stagger-in game-animate mt-8 flex flex-col items-center gap-5 border-t border-border pt-6 sm:mt-10" style={{ animationDelay: "120ms" }}>
           <GameCoin
             value={
               <>

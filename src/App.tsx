@@ -38,14 +38,11 @@ import GameEndPage from "@/pages/game-end";
 
 import PicturePuzzlePage from "@/pages/minigames/picture-puzzle";
 
+import HangmanPage from "@/pages/minigames/hangman";
+
 import WordPuzzlePage from "@/pages/minigames/word-puzzle";
 
-import GeoGuesserPage from "@/pages/minigames/geo-guesser";
-
-import AnagramPage from "@/pages/minigames/anagram";
-import WordLadderPage from "@/pages/minigames/ladder";
-import WheelOfWordsPage from "@/pages/minigames/wheel";
-import HangmanPage from "@/pages/minigames/hangman";
+import FakeOnePage from "@/pages/minigames/fake-one";
 
 
 
@@ -99,17 +96,11 @@ export default function App() {
 
         <Route path="/minigame/picture" element={<PicturePuzzlePage />} />
 
-        <Route path="/minigame/word" element={<WordPuzzlePage />} />
-
-        <Route path="/minigame/geo" element={<GeoGuesserPage />} />
-
         <Route path="/minigame/hangman" element={<HangmanPage />} />
 
-        <Route path="/minigame/anagram" element={<AnagramPage />} />
+        <Route path="/minigame/word" element={<WordPuzzlePage />} />
 
-        <Route path="/minigame/ladder" element={<WordLadderPage />} />
-
-        <Route path="/minigame/wheel" element={<WheelOfWordsPage />} />
+        <Route path="/minigame/geo" element={<FakeOnePage />} />
 
       </Routes>
 
@@ -118,4 +109,3 @@ export default function App() {
   );
 
 }
-
