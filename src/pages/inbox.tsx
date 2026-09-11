@@ -12,6 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import { SocialShell } from "@/components/layout/social-shell";
+import { StaggerIn } from "@/components/layout/game-ui";
 import { inboxCategories, inboxMessages } from "@/data/social-data";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -85,14 +86,16 @@ export default function InboxPage() {
             </button>
           </div>
           <ul className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
-            {inboxMessages.map((msg) => (
-              <MessageListItem
-                key={msg.id}
-                message={msg}
-                selected={msg.id === selectedId}
-                onSelect={() => setSelectedId(msg.id)}
-              />
-            ))}
+            <StaggerIn className="flex flex-col gap-2" stepMs={45}>
+              {inboxMessages.map((msg) => (
+                <MessageListItem
+                  key={msg.id}
+                  message={msg}
+                  selected={msg.id === selectedId}
+                  onSelect={() => setSelectedId(msg.id)}
+                />
+              ))}
+            </StaggerIn>
           </ul>
         </section>
 

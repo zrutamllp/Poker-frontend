@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 interface RoleSelectProps {
   value: PlayerRole | "";
   onChange: (role: PlayerRole) => void;
+  compact?: boolean;
 }
 
-export function RoleSelect({ value, onChange }: RoleSelectProps) {
+export function RoleSelect({ value, onChange, compact }: RoleSelectProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -25,19 +26,27 @@ export function RoleSelect({ value, onChange }: RoleSelectProps) {
 
   return (
     <div ref={ref} className="relative w-full">
-      <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-green-muted">
+      <label
+        className={cn(
+          "flex items-center gap-2 text-xs font-bold uppercase text-green-muted",
+          compact ? "mb-1" : "mb-2",
+        )}
+      >
         <span className="size-1.5 rounded-full bg-green-muted" />
         Role
       </label>
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2.5 rounded-md border-[1.5px] border-border bg-bg-input p-3 text-left focus:border-gold-muted outline-none sm:gap-3 sm:p-4"
+        className={cn(
+          "flex w-full items-center rounded-md border-[1.5px] border-border bg-bg-input text-left focus:border-gold-muted outline-none",
+          compact ? "gap-2 p-2.5" : "gap-2.5 p-3 sm:gap-3 sm:p-4",
+        )}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <Crown className="size-5 shrink-0 text-gold-muted" />
-        <span className={cn("flex-1 text-[15px]", value ? "text-white" : "text-text-muted")}>
+        <Crown className={cn("shrink-0 text-gold-muted", compact ? "size-4" : "size-5")} />
+        <span className={cn("flex-1", compact ? "text-sm" : "text-[15px]", value ? "text-white" : "text-text-muted")}>
           {value || "Select your role"}
         </span>
         <ChevronDown className={cn("size-5 text-text-muted transition-transform", open && "rotate-180")} />

@@ -1,4 +1,5 @@
 import { Clock } from "lucide-react";
+import { AnimatedValue } from "@/components/layout/game-ui";
 import { cn } from "@/lib/utils";
 
 interface BettingTopBarProps {
@@ -43,8 +44,11 @@ export function BettingTopBar({
           <span className="flex size-6 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-[#d49e29] bg-gold-light font-serif text-[10px] font-black text-text-dark">
             $
           </span>
-          <span className="text-base font-bold text-white">{cultureCoins}</span>
-          <span className="hidden text-sm text-[#a3bca9] sm:inline">Culture Coins Available</span>
+          <AnimatedValue value={cultureCoins} className="text-base font-bold text-white sm:text-base" />
+          <span className="text-sm font-bold text-white sm:text-base">
+            <span className="text-[13px] text-gold sm:hidden"> Coins</span>
+            <span className="hidden text-[13px] text-gold sm:inline"> Culture Coins</span>
+          </span>
         </div>
 
         <div className="flex items-center gap-2 rounded-lg border border-[#ff5e5e] bg-[#3a1616] px-4 py-2.5">

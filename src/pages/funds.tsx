@@ -9,9 +9,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { SocialShell } from "@/components/layout/social-shell";
+import { StaggerIn } from "@/components/layout/game-ui";
 import {
   fundRequests,
-  fundTransactions,
   PLAYER_COINS,
 } from "@/data/social-data";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ export default function FundsPage() {
     <SocialShell activeTab="funds">
       <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
         {/* Summary cards */}
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:mb-8 lg:grid-cols-3 lg:gap-5">
+        <StaggerIn className="mb-6 grid gap-4 sm:grid-cols-2 lg:mb-8 lg:grid-cols-3 lg:gap-5" stepMs={70}>
           <StatCard
             label="Total Balance"
             value={`${PLAYER_COINS} Coins`}
@@ -54,7 +54,7 @@ export default function FundsPage() {
             borderColor="border-gold"
             className="sm:col-span-2 lg:col-span-1"
           />
-        </div>
+        </StaggerIn>
 
         <div className="flex flex-col gap-6 xl:flex-row xl:gap-8">
           {/* Incoming requests */}
@@ -238,7 +238,7 @@ function StatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border-[1.5px] bg-bg-card p-5 sm:p-6",
+        "game-card rounded-2xl border-[1.5px] bg-bg-card p-5 sm:p-6",
         borderColor,
         className,
       )}

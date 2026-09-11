@@ -4,6 +4,7 @@ import { Spade } from "lucide-react";
 import { PokerTableCanvas } from "@/components/game/poker-table-canvas";
 import { LeaderboardSidebar } from "@/components/game/leaderboard-sidebar";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
+import { AnimatedValue, StaggerIn } from "@/components/layout/game-ui";
 import {
   teams,
   leaderboard,
@@ -40,8 +41,9 @@ function PredictionTopBar() {
             <span className="flex size-[18px] items-center justify-center rounded-lg border border-white bg-gold font-serif text-[11px] font-black text-text-dark">
               $
             </span>
+            <AnimatedValue value={45} className="text-sm font-bold text-white" />
             <span className="text-sm font-bold text-white">
-              45 <span className="text-xs text-gold">Culture Coins</span>
+              <span className="text-xs text-gold">Culture Coins</span>
             </span>
           </div>
         </div>
@@ -68,9 +70,9 @@ function TeamPredictionCard({
       type="button"
       onClick={onSelect}
       className={cn(
-        "flex flex-col gap-2 rounded-xl border p-3.5 text-left transition-all sm:p-3.5",
+        "game-card flex flex-col gap-2 rounded-xl border p-3.5 text-left sm:p-3.5",
         selected
-          ? "border-2 border-gold bg-[#1a2238] shadow-[0_4px_6px_rgba(212,175,55,0.15)]"
+          ? "border-2 border-gold bg-[#1a2238] shadow-[0_4px_6px_rgba(212,175,55,0.15)] game-coin-pulse game-animate"
           : "border-border bg-[#050709] hover:border-gold-muted/50",
       )}
     >
@@ -125,7 +127,7 @@ export default function PredictionPage() {
 
       {/* Modal overlay */}
       <div className="absolute inset-0 z-50 flex items-center justify-center bg-[rgba(5,7,9,0.83)] p-4 sm:p-8 lg:p-10">
-        <div className="relative flex max-h-[95dvh] w-full max-w-3xl flex-col gap-6 overflow-y-auto rounded-3xl border-[2.5px] border-gold bg-bg-card-alt/95 p-6 shadow-[0_24px_24px_rgba(0,0,0,0.8)] sm:gap-7 sm:p-8">
+        <div className="game-card game-stagger-in game-animate relative flex max-h-[95dvh] w-full max-w-3xl flex-col gap-6 overflow-y-auto rounded-3xl border-[2.5px] border-gold bg-bg-card-alt/95 p-6 shadow-[0_24px_24px_rgba(0,0,0,0.8)] sm:gap-7 sm:p-8">
           <div>
             <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-serif text-2xl font-black text-gold-light sm:text-[32px]">
@@ -147,7 +149,7 @@ export default function PredictionPage() {
 
           <hr className="border-border" />
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StaggerIn className="grid grid-cols-2 gap-3 sm:grid-cols-4" stepMs={55}>
             {tournamentPredictionTeams.map((team) => (
               <TeamPredictionCard
                 key={team.id}
@@ -158,7 +160,7 @@ export default function PredictionPage() {
                 onSelect={() => setSelectedId(team.id)}
               />
             ))}
-          </div>
+          </StaggerIn>
 
           {selectedTeam && (
             <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border-[1.5px] border-gold bg-[#1a1512] p-4">
@@ -198,7 +200,7 @@ export default function PredictionPage() {
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="flex-1 rounded-[30px] border border-white bg-gold px-8 py-4 font-serif text-base font-black text-text-dark shadow-[0_4px_6px_rgba(212,175,55,0.25)] transition-opacity hover:opacity-90"
+              className="game-btn flex-1 rounded-[30px] border border-white bg-gold px-8 py-4 font-serif text-base font-black text-text-dark shadow-[0_4px_6px_rgba(212,175,55,0.25)]"
             >
               LOCK IN PREDICTION
             </button>

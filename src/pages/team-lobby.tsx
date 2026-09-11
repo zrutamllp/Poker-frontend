@@ -4,6 +4,7 @@ import { lobbyTeams } from "@/data/game-data";
 import { getEllipticalSeatStyle } from "@/lib/seat-layout";
 import { Badge } from "@/components/common/badges";
 import { AppShellPage } from "@/components/layout/page-layouts";
+import { StaggerIn } from "@/components/layout/game-ui";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,7 +16,7 @@ function TeamLobbyCard({ team }: { team: LobbyTeam }) {
   return (
     <div
       className={cn(
-        "w-full max-w-36 rounded-xl border bg-bg-card-alt/95 p-2.5 backdrop-blur-sm transition-shadow sm:max-w-40 sm:p-3",
+        "game-card w-full max-w-36 rounded-xl border bg-bg-card-alt/95 p-2.5 backdrop-blur-sm transition-shadow sm:max-w-40 sm:p-3",
         isReady
           ? "border-green/40 shadow-[0_0_12px_rgba(33,150,83,0.2)]"
           : "border-gold-muted/40 shadow-[0_0_12px_rgba(212,175,55,0.15)]",
@@ -168,11 +169,11 @@ export default function TeamLobbyPage() {
         </div>
 
         {/* Mobile/tablet team grid */}
-        <div className="mt-4 grid w-full max-w-4xl shrink-0 grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:hidden">
+        <StaggerIn className="mt-4 grid w-full max-w-4xl shrink-0 grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:hidden" stepMs={45}>
           {lobbyTeams.map((team) => (
             <TeamLobbyCard key={team.id} team={team} />
           ))}
-        </div>
+        </StaggerIn>
       </main>
     </AppShellPage>
   );

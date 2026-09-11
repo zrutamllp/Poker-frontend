@@ -8,6 +8,7 @@ import {
 import { LiveBadge, RoundSlotBadge } from "@/components/common/badges";
 import { PokerTableCanvas } from "@/components/game/poker-table-canvas";
 import { LeaderboardSidebar } from "@/components/game/leaderboard-sidebar";
+import { StaggerIn } from "@/components/layout/game-ui";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
 
 const orderedRoundSlots = dashboardRoundOrder.map(
@@ -20,7 +21,7 @@ export default function DashboardPage() {
       <NavIconBar className="absolute right-4 top-4 z-50 sm:right-6 sm:top-4" />
       <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-hidden p-4 sm:gap-4 sm:p-5 lg:p-6">
         {/* Header */}
-        <div className="flex shrink-0 flex-wrap items-center justify-between gap-3">
+        <div className="game-stagger-in game-animate flex shrink-0 flex-wrap items-center justify-between gap-3">
           <div className="min-w-0 flex-col gap-0.5">
             <h1 className="font-display text-xl font-extrabold text-white sm:text-2xl lg:text-3xl">
               THE CULTURE TABLE
@@ -33,7 +34,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Round tracker */}
-        <section className="flex shrink-0 flex-col gap-2 rounded-xl border border-[#1f2535] bg-[#11141d] p-3 sm:gap-3 sm:p-4">
+        <section className="game-card game-stagger-in game-animate flex shrink-0 flex-col gap-2 rounded-xl border border-[#1f2535] bg-[#11141d] p-3 sm:gap-3 sm:p-4" style={{ animationDelay: "60ms" }}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="font-display text-xs font-extrabold text-white sm:text-sm">
               ROUNDS COMPLETED: 0 / {TOTAL_ROUNDS}
@@ -41,11 +42,11 @@ export default function DashboardPage() {
             <p className="text-[10px] text-[#8f9cae] sm:text-xs">Stage: Main Event Blinds</p>
           </div>
           <div className="-mx-1 overflow-x-auto px-1 pb-0.5">
-            <div className="flex min-w-max gap-1.5 sm:gap-2">
+            <StaggerIn className="flex min-w-max gap-1.5 sm:gap-2" stepMs={45}>
               {orderedRoundSlots.map((slot) => (
                 <RoundSlotBadge key={slot.id} label={slot.label} status={slot.status} />
               ))}
-            </div>
+            </StaggerIn>
           </div>
         </section>
 

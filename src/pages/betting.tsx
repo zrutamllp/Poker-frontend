@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, Minus, Plus, Sparkles, Star } from "lucide-react";
 import { BettingTopBar } from "@/components/layout/betting-top-bar";
+import { AnimatedValue, FloatingReward, GameProgressBar, StaggerIn } from "@/components/layout/game-ui";
 import { NavIconBar } from "@/components/layout/nav-icon-bar";
 import { bettingOptions, lobbyTeams, TOTAL_ROUNDS } from "@/data/game-data";
 import { cn } from "@/lib/utils";
@@ -40,8 +41,18 @@ function BetOptionRow({
   onDecrease: () => void;
   onIncrease: () => void;
 }) {
+  const [reward, setReward] = useState<{ show: boolean; label: string; key: number }>({
+    show: false,
+    label: "",
+    key: 0,
+  });
+
+  function flashReward(deltaLabel: string) {
+    setReward((r) => ({ show: true, label: deltaLabel, key: r.key + 1 }));
+  }
+
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border-[1.5px] border-gold-light bg-[#0f2116] p-4 shadow-[0_0_4px_rgba(245,196,83,0.2)] sm:p-[18px]">
+    <div className="game-card flex items-center justify-between gap-3 rounded-xl border-[1.5px] border-gold-light bg-[#0f2116] p-4 shadow-[0_0_4px_rgba(245,196,83,0.2)] sm:p-[18px]">
       <div className="flex min-w-0 flex-1 items-center gap-4">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-[18px] border-2 border-[#d49e29] bg-gold-light font-display text-lg font-extrabold text-[#0b1d14]">
           {label}
@@ -50,20 +61,32 @@ function BetOptionRow({
       </div>
       <div className="flex shrink-0 items-center gap-4 sm:gap-6">
         <CoinStack />
-        <div className="flex items-center gap-2">
+        <div className="relative flex items-center gap-2">
+          <FloatingReward
+            key={reward.key}
+            show={reward.show}
+            label={reward.label}
+            onDone={() => setReward((r) => ({ ...r, show: false }))}
+          />
           <button
             type="button"
-            onClick={onDecrease}
-            className="flex size-8 items-center justify-center rounded-lg border border-[#23412b] bg-[#061a0e] text-white hover:bg-[#0f2116]"
+            onClick={() => {
+              onDecrease();
+              flashReward("-5");
+            }}
+            className="game-btn-sm flex size-8 items-center justify-center rounded-lg border border-[#23412b] bg-[#061a0e] text-white hover:bg-[#0f2116]"
             aria-label={`Decrease bet on ${label}`}
           >
             <Minus className="size-4" />
           </button>
-          <span className="min-w-8 text-center text-lg font-bold text-white">{amount}</span>
+          <AnimatedValue value={amount} className="min-w-8 text-center text-lg font-bold text-white" />
           <button
             type="button"
-            onClick={onIncrease}
-            className="flex size-8 items-center justify-center rounded-lg border border-[#23412b] bg-[#061a0e] text-white hover:bg-[#0f2116]"
+            onClick={() => {
+              onIncrease();
+              flashReward("+5");
+            }}
+            className="game-btn-sm flex size-8 items-center justify-center rounded-lg border border-[#23412b] bg-[#061a0e] text-white hover:bg-[#0f2116]"
             aria-label={`Increase bet on ${label}`}
           >
             <Plus className="size-4" />
@@ -101,15 +124,14 @@ export default function BettingPage() {
         round={3}
         totalRounds={TOTAL_ROUNDS}
         teamName="The Aces"
-        cultureCoins={maxCoins}
+        cultureCoins={maxCoins - totalPlaced}
         timer="01:45"
       />
 
       <main className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-10 lg:px-12">
         <div className="mx-auto flex max-w-7xl flex-col gap-8 xl:flex-row xl:gap-12">
-          {/* Left — main bets */}
           <section className="min-w-0 flex-1">
-            <div className="mb-6">
+            <div className="game-stagger-in game-animate mb-6">
               <div className="mb-1.5 flex items-center gap-3">
                 <span className="flex size-5 items-center justify-center rounded-[10px] border-[1.5px] border-[#d49e29] bg-gold-light font-serif text-[10px] font-black text-text-dark">
                   $
@@ -130,7 +152,7 @@ export default function BettingPage() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <StaggerIn className="flex flex-col gap-3" stepMs={60} baseDelayMs={80}>
               {bettingOptions.map((opt) => (
                 <BetOptionRow
                   key={opt.id}
@@ -141,21 +163,21 @@ export default function BettingPage() {
                   onIncrease={() => adjustBet(opt.id, 5)}
                 />
               ))}
-            </div>
+            </StaggerIn>
 
             <div className="mt-6">
               <div className="mb-2 flex items-center justify-between text-sm">
                 <span className="text-[#a3bca9]">Culture Coins Placed</span>
                 <span className="font-bold text-gold-light">
-                  {totalPlaced} / {maxCoins} Coins
+                  <AnimatedValue value={totalPlaced} /> / {maxCoins} Coins
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-[#061a0e]">
-                <div
-                  className="h-full rounded-full bg-gold-light transition-all"
-                  style={{ width: `${Math.min(100, (totalPlaced / maxCoins) * 100)}%` }}
-                />
-              </div>
+              <GameProgressBar
+                value={totalPlaced}
+                max={maxCoins}
+                className="h-2 bg-[#061a0e]"
+                fillClassName="bg-gold-light"
+              />
               <p className="mt-2 text-xs text-[#668870]">
                 {totalPlaced === maxCoins
                   ? "All available coins have been successfully placed for this round."
@@ -164,7 +186,6 @@ export default function BettingPage() {
             </div>
           </section>
 
-          {/* Right — side bets */}
           <section className="w-full shrink-0 xl:w-[380px]">
             <div className="mb-6">
               <div className="mb-1.5 flex items-center gap-3">
@@ -211,7 +232,7 @@ export default function BettingPage() {
                     const idx = teams.indexOf(sideTeam);
                     setSideTeam(teams[(idx + 1) % teams.length]);
                   }}
-                  className="text-gold"
+                  className="game-btn-sm text-gold"
                   aria-label="Cycle target team"
                 >
                   <ChevronDown className="size-5" />
@@ -228,7 +249,7 @@ export default function BettingPage() {
                     type="button"
                     onClick={() => setSideOption(opt)}
                     className={cn(
-                      "flex size-10 items-center justify-center rounded-full border-2 font-display text-sm font-extrabold transition-colors",
+                      "game-btn-sm flex size-10 items-center justify-center rounded-full border-2 font-display text-sm font-extrabold transition-colors",
                       sideOption === opt
                         ? "border-gold bg-gold text-text-dark"
                         : "border-[#23412b] bg-[#0f2116] text-[#a3bca9] hover:border-gold-muted",
@@ -255,22 +276,22 @@ export default function BettingPage() {
               $
             </span>
             <span>
-              Bets Locked In: Answer Bet: {totalPlaced} coins | Team Side Bet: {sideTeam} on{" "}
-              {sideOption}
+              Bets Locked In: Answer Bet: <AnimatedValue value={totalPlaced} /> coins | Team Side Bet:{" "}
+              {sideTeam} on {sideOption}
             </span>
           </p>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={resetAll}
-              className="text-sm font-medium text-[#a3bca9] hover:text-white"
+              className="game-btn-sm text-sm font-medium text-[#a3bca9] hover:text-white"
             >
               Reset All
             </button>
             <button
               type="button"
               onClick={() => navigate("/round")}
-              className="flex items-center gap-2 rounded-xl bg-gold-light px-6 py-3 font-display text-base font-extrabold text-[#0b1d14] shadow-[0_0_12px_rgba(245,196,83,0.3)] transition-opacity hover:opacity-90"
+              className="game-btn flex items-center gap-2 rounded-xl bg-gold-light px-6 py-3 font-display text-base font-extrabold text-[#0b1d14] shadow-[0_0_12px_rgba(245,196,83,0.3)]"
             >
               <span className="flex size-5 items-center justify-center rounded-full border border-[#0b1d14]/20 bg-[#0b1d14]/10 font-serif text-[10px]">
                 $

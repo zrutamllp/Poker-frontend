@@ -86,4 +86,1066 @@
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
+
+  @keyframes win-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.92) translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes loss-flash {
+    0% {
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes loss-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-6px);
+    }
+    40% {
+      transform: translateX(6px);
+    }
+    60% {
+      transform: translateX(-4px);
+    }
+    80% {
+      transform: translateX(4px);
+    }
+  }
+
+  @keyframes chip-bounce {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) rotate(-5deg) scale(0.94);
+    }
+    65% {
+      transform: translateY(-5px) rotate(2deg) scale(1.01);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotate(0) scale(1);
+    }
+  }
+
+  @keyframes bubble-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.88);
+    }
+    70% {
+      transform: scale(1.03);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes card-fan {
+    0% {
+      opacity: 0;
+      transform: translateY(28px) rotate(-2deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotate(0);
+    }
+  }
+
+  @keyframes felt-deal {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slide-bet {
+    0% {
+      opacity: 0;
+      transform: translateY(32px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes wobble-pick {
+    0% {
+      opacity: 0;
+      transform: rotate(-2deg) translateY(12px);
+    }
+    50% {
+      transform: rotate(1.5deg) translateY(-2px);
+    }
+    100% {
+      opacity: 1;
+      transform: rotate(0) translateY(0);
+    }
+  }
+
+  @keyframes flip-deal {
+    0% {
+      opacity: 0;
+      transform: perspective(800px) rotateY(-70deg);
+    }
+    100% {
+      opacity: 1;
+      transform: perspective(800px) rotateY(0);
+    }
+  }
+
+  @keyframes curtain-wipe {
+    0% {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+    }
+    100% {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes trophy-bounce {
+    0% {
+      opacity: 0;
+      transform: scale(0.9) translateY(16px);
+    }
+    60% {
+      transform: scale(1.04) translateY(-4px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes slide-inbox {
+    0% {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes arcade-glitch {
+    0% {
+      opacity: 0;
+      transform: translate(0);
+      filter: none;
+    }
+    25% {
+      opacity: 0.85;
+      transform: translate(-2px, 1px);
+      filter: hue-rotate(18deg);
+    }
+    50% {
+      transform: translate(2px, -1px);
+      filter: hue-rotate(-14deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(0);
+      filter: none;
+    }
+  }
+
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: scale(0.92);
+      filter: brightness(0.7);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: brightness(1);
+    }
+  }
+
+  @keyframes fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .page-enter-chip-bounce,
+  .page-enter-bubble-pop,
+  .page-enter-card-fan,
+  .page-enter-felt-deal,
+  .page-enter-slide-bet,
+  .page-enter-wobble-pick,
+  .page-enter-flip-deal,
+  .page-enter-curtain-wipe,
+  .page-enter-trophy-bounce,
+  .page-enter-slide-inbox,
+  .page-enter-arcade-glitch,
+  .page-enter-spotlight,
+  .page-enter-fade-up {
+    animation-duration: var(--page-enter-duration, 0.42s);
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+  }
+
+  .page-enter-chip-bounce {
+    animation-name: chip-bounce;
+  }
+  .page-enter-bubble-pop {
+    animation-name: bubble-pop;
+  }
+  .page-enter-card-fan {
+    animation-name: card-fan;
+  }
+  .page-enter-felt-deal {
+    animation-name: felt-deal;
+  }
+  .page-enter-slide-bet {
+    animation-name: slide-bet;
+  }
+  .page-enter-wobble-pick {
+    animation-name: wobble-pick;
+  }
+  .page-enter-flip-deal {
+    animation-name: flip-deal;
+  }
+  .page-enter-curtain-wipe {
+    animation-name: curtain-wipe;
+  }
+  .page-enter-trophy-bounce {
+    animation-name: trophy-bounce;
+  }
+  .page-enter-slide-inbox {
+    animation-name: slide-inbox;
+  }
+  .page-enter-arcade-glitch {
+    animation-name: arcade-glitch;
+  }
+  .page-enter-spotlight {
+    animation-name: spotlight;
+  }
+  .page-enter-fade-up {
+    animation-name: fade-up;
+  }
+
+  /* --- Minigame motion (GPU: transform + opacity) --- */
+  @keyframes mg-tile-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.55) translateY(10px);
+    }
+    65% {
+      transform: scale(1.1) translateY(-3px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes mg-panel-slide {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes mg-board-enter {
+    0% {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mg-correct-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes mg-wrong-jolt {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-5px);
+    }
+    40% {
+      transform: translateX(5px);
+    }
+    60% {
+      transform: translateX(-3px);
+    }
+    80% {
+      transform: translateX(3px);
+    }
+  }
+
+  @keyframes mg-geo-close-pulse {
+    0% {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    35% {
+      opacity: 1;
+      transform: scale(1.02);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes mg-geo-miss-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    15% {
+      transform: translateX(-6px);
+    }
+    30% {
+      transform: translateX(6px);
+    }
+    45% {
+      transform: translateX(-4px);
+    }
+    60% {
+      transform: translateX(4px);
+    }
+  }
+
+  @keyframes mg-reveal-flip {
+    0% {
+      transform: rotateX(-90deg);
+      opacity: 0;
+    }
+    100% {
+      transform: rotateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mg-ladder-rung {
+    0% {
+      opacity: 0;
+      transform: translateX(-24px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  @keyframes mg-float-orb {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.35;
+    }
+    50% {
+      transform: translate(12px, -18px) scale(1.08);
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes mg-scan-sweep {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.04;
+    }
+    90% {
+      opacity: 0.04;
+    }
+    100% {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }
+
+  @keyframes mg-header-glow {
+    0%,
+    100% {
+      box-shadow: 0 1px 0 rgba(139, 92, 246, 0.2);
+    }
+    50% {
+      box-shadow:
+        0 0 24px rgba(139, 92, 246, 0.25),
+        0 1px 0 rgba(139, 92, 246, 0.3);
+    }
+  }
+
+  @keyframes mg-wheel-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.02);
+      opacity: 0.95;
+    }
+  }
+
+  @keyframes mg-radar-sweep {
+    0% {
+      transform: scaleX(0.3);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scaleX(0.85);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes mg-pin-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.3);
+    }
+  }
+
+  @keyframes mg-grid-deal {
+    0% {
+      opacity: 0;
+      transform: scale(0.85) rotate(-2deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+  }
+
+  @keyframes mg-win-burst {
+    0% {
+      opacity: 0;
+      transform: scale(0.75);
+    }
+    55% {
+      transform: scale(1.06);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mg-shimmer-bar {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  @keyframes mg-row-flip {
+    0% {
+      opacity: 0;
+      transform: perspective(600px) rotateX(-40deg);
+    }
+    100% {
+      opacity: 1;
+      transform: perspective(600px) rotateX(0);
+    }
+  }
+
+  .mg-animate {
+    animation-fill-mode: both;
+  }
+
+  .mg-tile {
+    animation: mg-tile-pop 0.38s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .mg-tile-correct {
+    animation: mg-correct-pulse 0.45s ease-out;
+  }
+
+  .mg-tile-wrong {
+    animation: mg-wrong-jolt 0.4s ease-in-out;
+  }
+
+  .mg-tile-revealed {
+    animation: mg-reveal-flip 0.42s ease-out;
+  }
+
+  .mg-panel-enter {
+    animation: mg-panel-slide 0.45s ease-out;
+  }
+
+  .mg-board {
+    animation: mg-board-enter 0.5s ease-out;
+  }
+
+  .mg-ladder-rung {
+    animation: mg-ladder-rung 0.4s ease-out;
+  }
+
+  .mg-grid-tile {
+    animation: mg-grid-deal 0.42s ease-out;
+  }
+
+  .mg-row-flip {
+    animation: mg-row-flip 0.48s ease-out;
+  }
+
+  .mg-wheel-ring {
+    animation: mg-wheel-pulse 2.5s ease-in-out infinite;
+  }
+
+  .mg-pin-pulse {
+    animation: mg-pin-pulse 1.8s ease-in-out infinite;
+  }
+
+  .mg-radar-fill {
+    animation: mg-radar-sweep 2s ease-in-out infinite;
+    transform-origin: left center;
+  }
+
+  .mg-header-pulse {
+    animation: mg-header-glow 3s ease-in-out infinite;
+  }
+
+  .mg-win-burst {
+    animation: mg-win-burst 0.55s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+
+  .mg-btn-glow {
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.12s ease;
+  }
+
+  .mg-btn-glow:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
+  }
+
+  .mg-btn-glow:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  .mg-ambient .mg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    animation: mg-float-orb 8s ease-in-out infinite;
+  }
+
+  .mg-orb-a {
+    width: 280px;
+    height: 280px;
+    background: rgba(139, 92, 246, 0.12);
+    top: -80px;
+    left: -60px;
+  }
+
+  .mg-orb-b {
+    width: 220px;
+    height: 220px;
+    background: rgba(6, 182, 212, 0.1);
+    bottom: 10%;
+    right: -40px;
+    animation-delay: -3s;
+    animation-duration: 10s;
+  }
+
+  .mg-orb-c {
+    width: 180px;
+    height: 180px;
+    background: rgba(245, 158, 11, 0.08);
+    top: 40%;
+    left: 30%;
+    animation-delay: -5s;
+    animation-duration: 12s;
+  }
+
+  .mg-scanline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent 0%, rgba(139, 92, 246, 0.03) 50%, transparent 100%);
+    height: 40%;
+    animation: mg-scan-sweep 6s linear infinite;
+    pointer-events: none;
+  }
+
+  .mg-shimmer-track {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mg-shimmer-track::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    animation: mg-shimmer-bar 2.5s ease-in-out 1;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mg-animate,
+    .mg-tile,
+    .mg-panel-enter,
+    .mg-board,
+    .mg-ladder-rung,
+    .mg-grid-tile,
+    .mg-row-flip,
+    .mg-wheel-ring,
+    .mg-pin-pulse,
+    .mg-radar-fill,
+    .mg-header-pulse,
+    .mg-win-burst,
+    .mg-ambient .mg-orb,
+    .mg-scanline,
+    .mg-shimmer-track::after {
+      animation: none !important;
+    }
+
+    .mg-btn-glow:hover:not(:disabled),
+    .mg-btn-glow:active:not(:disabled) {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .game-animate,
+    .game-stagger-in,
+    .game-card,
+    .game-coin-pulse,
+    .game-confetti-piece,
+    .game-ambient .game-orb,
+    .game-sparkle-sweep,
+    .game-nav-icon:hover {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    .game-btn:hover,
+    .game-btn:active {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .game-score-pop,
+    .game-success-pop,
+    .game-shake-once,
+    .game-float-reward,
+    .game-progress-complete,
+    .game-streak-pop,
+    .game-clue-reveal,
+    .game-loading-dot {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+
+  /* --- Project-wide gamification (GPU-friendly) --- */
+  @keyframes game-stagger-up {
+    0% {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes game-card-hover-idle {
+    0%,
+    100% {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    50% {
+      box-shadow: 0 8px 28px rgba(212, 175, 55, 0.12);
+    }
+  }
+
+  @keyframes game-coin-pulse-kf {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 rgba(212, 175, 55, 0);
+    }
+    50% {
+      transform: scale(1.04);
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+    }
+  }
+
+  @keyframes game-float-orb {
+    0%,
+    100% {
+      transform: translate(0, 0);
+      opacity: 0.25;
+    }
+    50% {
+      transform: translate(8px, -14px);
+      opacity: 0.45;
+    }
+  }
+
+  @keyframes game-sparkle-sweep {
+    0% {
+      transform: translateX(-100%) rotate(-3deg);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.06;
+    }
+    100% {
+      transform: translateX(100%) rotate(-3deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes game-confetti-fall {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px) rotate(0deg);
+    }
+    15% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0.7;
+      transform: translateY(80vh) rotate(720deg);
+    }
+  }
+
+  @keyframes game-live-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.15);
+    }
+  }
+
+  @keyframes game-score-pop {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.14);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes game-success-pop {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 rgba(33, 150, 83, 0);
+    }
+    45% {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(33, 150, 83, 0.25);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 rgba(33, 150, 83, 0);
+    }
+  }
+
+  @keyframes game-shake-once {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-4px);
+    }
+    40% {
+      transform: translateX(4px);
+    }
+    60% {
+      transform: translateX(-2px);
+    }
+    80% {
+      transform: translateX(2px);
+    }
+  }
+
+  @keyframes game-float-reward {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, 0) scale(0.85);
+    }
+    20% {
+      opacity: 1;
+      transform: translate(-50%, -8px) scale(1.05);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -28px) scale(1);
+    }
+  }
+
+  @keyframes game-progress-complete {
+    0% {
+      box-shadow: 0 0 0 rgba(212, 175, 55, 0);
+    }
+    50% {
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.45);
+    }
+    100% {
+      box-shadow: 0 0 0 rgba(212, 175, 55, 0);
+    }
+  }
+
+  @keyframes game-streak-pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(var(--streak-scale, 1.08));
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes game-loading-dot {
+    0%,
+    80%,
+    100% {
+      transform: scale(0.75);
+      opacity: 0.4;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes game-clue-reveal {
+    0% {
+      opacity: 0;
+      transform: perspective(800px) rotateY(-12deg) scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: perspective(800px) rotateY(0) scale(1);
+    }
+  }
+
+  .game-animate {
+    animation-fill-mode: both;
+  }
+
+  .game-stagger-in {
+    animation: game-stagger-up 0.48s cubic-bezier(0.34, 1.2, 0.64, 1);
+  }
+
+  .game-card {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .game-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.45);
+  }
+
+  .game-btn {
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .game-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(212, 175, 55, 0.3);
+  }
+
+  .game-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .game-btn-sm {
+    transition: transform 0.1s ease;
+  }
+
+  .game-btn-sm:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  .game-score-pop {
+    animation: game-score-pop 0.32s ease-out 1;
+  }
+
+  .game-success-pop {
+    animation: game-success-pop 0.38s ease-out 1;
+  }
+
+  .game-shake-once {
+    animation: game-shake-once 0.35s ease-in-out 1;
+  }
+
+  .game-float-reward {
+    animation: game-float-reward 0.48s ease-out forwards;
+  }
+
+  .game-progress-fill {
+    transition: width 0.28s cubic-bezier(0.34, 1.1, 0.64, 1);
+  }
+
+  .game-progress-complete {
+    animation: game-progress-complete 0.45s ease-out 1;
+  }
+
+  .game-streak-pop {
+    animation: game-streak-pop 0.35s ease-out 1;
+  }
+
+  .game-clue-reveal {
+    animation: game-clue-reveal 0.5s cubic-bezier(0.34, 1.1, 0.64, 1) 1;
+  }
+
+  .game-loading-dot {
+    animation: game-loading-dot 1.2s ease-in-out infinite;
+  }
+
+  .game-loading-dot:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .game-loading-dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .game-coin-pulse {
+    animation: game-coin-pulse-kf 0.6s ease-out 1;
+  }
+
+  .game-coin-pulse-once {
+    animation: game-coin-pulse-kf 0.6s ease-out 1;
+  }
+
+  .game-confetti-piece {
+    animation: game-confetti-fall 3.5s ease-in forwards;
+    animation-iteration-count: 1;
+  }
+
+  .game-live-dot {
+    animation: game-live-pulse 1.5s ease-in-out infinite;
+  }
+
+  .game-nav-icon {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .game-nav-icon:hover {
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.25);
+  }
+
+  .game-ambient .game-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    animation: game-float-orb 10s ease-in-out infinite;
+  }
+
+  .game-orb-gold {
+    width: 320px;
+    height: 320px;
+    background: rgba(212, 175, 55, 0.1);
+    top: -100px;
+    right: -80px;
+  }
+
+  .game-orb-green {
+    width: 260px;
+    height: 260px;
+    background: rgba(33, 150, 83, 0.12);
+    bottom: 5%;
+    left: -60px;
+    animation-delay: -4s;
+    animation-duration: 12s;
+  }
+
+  .game-orb-felt {
+    width: 200px;
+    height: 200px;
+    background: rgba(6, 182, 212, 0.08);
+    top: 35%;
+    left: 40%;
+    animation-delay: -6s;
+    animation-duration: 14s;
+  }
+
+  .game-sparkle-sweep {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(212, 175, 55, 0.04) 50%,
+      transparent 60%
+    );
+    animation: game-sparkle-sweep 8s linear infinite;
+    pointer-events: none;
+  }
 }

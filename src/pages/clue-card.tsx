@@ -26,8 +26,8 @@ export default function ClueCardPage() {
           Your Private Clue
         </p>
 
-        <div className="relative w-full max-w-md rotate-1 transition-transform hover:rotate-0">
-          <div className="rounded-2xl border-2 border-gold bg-gradient-to-br from-[#f7f5f0] to-[#e8e4dc] p-5 shadow-[0_20px_40px_rgba(0,0,0,0.4)] sm:p-6 md:p-8">
+        <div className="relative w-full max-w-md">
+          <div className="game-clue-reveal game-animate rounded-2xl border-2 border-gold bg-gradient-to-br from-[#f7f5f0] to-[#e8e4dc] p-5 shadow-[0_20px_40px_rgba(0,0,0,0.4)] sm:p-6 md:p-8">
             <div className="mb-4 flex items-center justify-between sm:mb-6">
               <span className="rounded-pill bg-gold/20 px-3 py-1 text-xs font-bold text-gold-muted">
                 CLUE CARD
