@@ -17,7 +17,7 @@ export function AuthScene({ children, className }: AuthSceneProps) {
       <Spade className="pointer-events-none absolute left-4 top-4 size-16 text-white/[0.03] sm:left-[60px] sm:top-[60px] sm:size-28 lg:size-32" />
       <Diamond className="pointer-events-none absolute bottom-4 right-4 size-16 text-white/[0.03] sm:bottom-[60px] sm:right-[60px] sm:size-28 lg:size-32" />
 
-      <main className="relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-6 sm:px-8 sm:py-10 lg:px-16">
+      <main className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-10">
         {children}
       </main>
     </div>

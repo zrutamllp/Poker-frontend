@@ -22,16 +22,16 @@ export default function JoinGamePage() {
 
   return (
     <AuthScene>
-      <div className="flex w-full max-w-md flex-col items-center gap-6 sm:gap-8 lg:gap-12">
+      <div className="mx-auto my-auto flex w-full max-w-md flex-col items-center gap-5 sm:gap-6">
         <BrandHeader size="sm" className="gap-2 sm:gap-3" />
 
         <form
           onSubmit={handleSubmit}
-          className="game-card game-stagger-in game-animate relative w-full rounded-2xl border-2 border-gold p-6 shadow-[0_24px_48px_rgba(0,0,0,0.65)] sm:rounded-3xl sm:p-10"
+          className="game-card game-stagger-in game-animate relative w-full rounded-2xl border-2 border-gold p-5 shadow-[0_24px_48px_rgba(0,0,0,0.65)] sm:rounded-3xl sm:p-8"
           style={{ animationDelay: "80ms" }}
         >
           <div className="absolute inset-0 rounded-2xl bg-bg-card-alt/95 sm:rounded-3xl" />
-          <div className="relative flex flex-col gap-5 sm:gap-8">
+          <div className="relative flex flex-col gap-4 sm:gap-5">
             <div className="text-center">
               <h2 className="font-serif text-2xl font-black text-white sm:text-[28px]">
                 Enter the Table
@@ -43,7 +43,7 @@ export default function JoinGamePage() {
 
             <hr className="border-border" />
 
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
               <div>
                 <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-green-muted">
                   <span className="size-1.5 rounded-full bg-green-muted" />
