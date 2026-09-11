@@ -31,9 +31,6 @@ const ROUTE_ANIMATIONS: Record<string, PageAnimationConfig> = {
   "/join": {
     css: "chip-bounce",
     durationMs: 520,
-    lottie: "/lottie/accent-chip.json",
-    lottiePosition: "top-right",
-    lottieSize: 56,
   },
   "/team-setup": { css: "chip-bounce", durationMs: 480 },
   "/lobby": { css: "bubble-pop", durationMs: 460 },
@@ -57,9 +54,6 @@ const ROUTE_ANIMATIONS: Record<string, PageAnimationConfig> = {
   "/betting": {
     css: "slide-bet",
     durationMs: 440,
-    lottie: "/lottie/accent-chip.json",
-    lottiePosition: "top-right",
-    lottieSize: 48,
     ambient: false,
   },
   "/round": { css: "wobble-pick", durationMs: 460, ambient: false },
